@@ -65,11 +65,12 @@ class Status {
     private q: SearchQuery,
     private spot: Spot | undefined,
     private nearest = false,
+    private agent = false,
   ) {}
 
   private render() {
     const seconds = Math.round((Date.now() - this.t0) / 1000);
-    return F.statusText(this.q, this.spot, { seconds, progress: this.progress, queued: this.queued, nearest: this.nearest });
+    return F.statusText(this.q, this.spot, { seconds, progress: this.progress, queued: this.queued, nearest: this.nearest, agent: this.agent });
   }
 
   async open() {
@@ -132,16 +133,16 @@ async function runSearch(
   ctx: Context,
   q: SearchQuery,
   spot: Spot | undefined,
-  opts: { alertMe?: boolean; alt?: boolean; refresh?: boolean } = {},
+  opts: { alertMe?: boolean; alt?: boolean; refresh?: boolean; agent?: boolean } = {},
 ) {
   const chatId = ctx.chat!.id;
-  // Refresh = a new run unless the last one is under a minute old.
-  let r = await peek(q, opts.refresh ? 1 : undefined);
+  // Refresh = a new run unless the last one is under a minute old. Agent = always a new (showcase) run.
+  let r = opts.agent ? null : await peek(q, opts.refresh ? 1 : undefined);
   if (!r) {
-    const status = new Status(ctx.api, chatId, q, spot);
+    const status = new Status(ctx.api, chatId, q, spot, false, opts.agent);
     await status.open();
     try {
-      r = await searchBloodStock(q, status.watcher, { maxAgeMinutes: opts.refresh ? 1 : undefined });
+      r = await searchBloodStock(q, status.watcher, { maxAgeMinutes: opts.refresh ? 1 : undefined, agent: opts.agent });
     } finally {
       await status.close();
     }
@@ -418,6 +419,8 @@ handlers.on("callback_query:data", async (ctx) => {
       return detach(fromCache(ctx, q, (r) => sendTo(ctx.api, chatId, F.resultMessage(r, spot, { all: true }))));
     case "w":
       return detach(widen(ctx, q, spot));
+    case "ag":
+      return detach(runSearch(ctx, q, spot, { agent: true }));
     case "alt": {
       const alt = ALTERNATE_COMPONENTS[q.component]?.[0];
       if (alt) return detach(runSearch(ctx, { ...q, component: alt }, spot, { alt: true }));

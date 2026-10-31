@@ -2,6 +2,7 @@ import type { AgentEvent, SearchQuery } from "../types";
 import { agentRequest, errorText, lastGood, normaliseResult, saveGood } from "./agent";
 import { canSpend, recordSpend } from "./budget";
 import { cancelRun, getRun, runSse, TinyFishError } from "./tinyfish";
+import { fastStock } from "./fastStock";
 
 export const EST_SEARCH_STEPS = 25;
 /** TinyFish did not enforce max_duration_seconds on the first live run, so we enforce our own. */
@@ -9,6 +10,35 @@ export const SEARCH_DEADLINE_MS = 420_000;
 
 const iso = () => new Date().toISOString();
 const str = (v: unknown) => (typeof v === "string" ? v : undefined);
+
+/** "fast" (default): TinyFish browser + eRaktKosh's own data request, agent only as fallback. "agent": always the AI agent. */
+export const SEARCH_MODE: "fast" | "agent" = process.env.BLOODLINK_SEARCH === "agent" ? "agent" : "fast";
+
+/**
+ * The search both the web app and the bot use. Fast path first (~2 s warm, ~15–35 s cold, no agent steps),
+ * then the AI agent (2–4 min) if that fails. Pass `{ agent: true }` to show the agent on purpose.
+ * Same AgentEvent stream as liveAgentRun, so callers don't change.
+ */
+export async function* liveStockRun(q: SearchQuery, signal: AbortSignal, opts: { agent?: boolean } = {}): AsyncGenerator<AgentEvent> {
+  if (!opts.agent && SEARCH_MODE === "fast") {
+    const run_id = `fast_${Date.now().toString(36)}`;
+    yield { type: "STARTED", run_id, timestamp: iso() };
+    yield { type: "PROGRESS", run_id, purpose: "Opening eRaktKosh in a TinyFish browser", timestamp: iso() };
+    try {
+      const r = await fastStock(q, signal);
+      if (signal.aborted) return;
+      await saveGood(q, r.banks);
+      yield { type: "PROGRESS", run_id, purpose: `Read ${r.banks.length} blood banks from eRaktKosh in ${(r.ms / 1000).toFixed(1)} s`, timestamp: iso() };
+      yield { type: "COMPLETE", run_id, status: "COMPLETED", result: { status: "success", banks: r.banks }, steps: 0, source: "live", timestamp: iso() };
+      return;
+    } catch (e) {
+      if (signal.aborted) return;
+      console.warn("[liveStockRun] fast path failed, sending the agent:", (e as Error).message);
+      yield { type: "PROGRESS", run_id, purpose: "Quick lookup failed, sending the AI agent instead (2–4 min)", timestamp: iso() };
+    }
+  }
+  yield* liveAgentRun(q, signal);
+}
 
 /**
  * Proxies TinyFish run-sse and re-emits our AgentEvent shape. On any failure it falls back

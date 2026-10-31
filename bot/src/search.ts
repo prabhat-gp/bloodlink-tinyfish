@@ -3,11 +3,11 @@
  *  - 15-min cache: the same search again is instant and free
  *  - joins identical searches already running (5 people asking = 1 agent run)
  *  - at most 2 agent runs at once (TinyFish account limit); the rest wait in line
- * Always live: it runs the web app's own TinyFish agent call on eRaktKosh, unchanged.
+ * Always live: it runs the shared liveStockRun (TinyFish browser fast path, AI agent as fallback).
  */
 import { NEIGHBOURS } from "../../src/lib/eraktkosh";
 import { lastGood } from "../../src/lib/server/agent";
-import { liveAgentRun, SEARCH_DEADLINE_MS } from "../../src/lib/server/liveSearch";
+import { liveStockRun, SEARCH_DEADLINE_MS } from "../../src/lib/server/liveSearch";
 import { readJson, writeJson } from "../../src/lib/server/store";
 import type { AgentEvent, RawBank, SearchQuery } from "../../src/lib/types";
 import { config } from "./config";
@@ -36,9 +36,9 @@ export interface Watcher {
   onStreamingUrl?(url: string): void;
 }
 
-export type Runner = (q: SearchQuery, signal: AbortSignal) => AsyncGenerator<AgentEvent>;
+export type Runner = (q: SearchQuery, signal: AbortSignal, opts: { agent?: boolean }) => AsyncGenerator<AgentEvent>;
 
-const defaultRunner: Runner = (q, signal) => liveAgentRun(q, signal);
+const defaultRunner: Runner = (q, signal, opts) => liveStockRun(q, signal, opts);
 let runner: Runner = defaultRunner;
 /** Tests swap in a fast fake. */
 export const setRunner = (r?: Runner) => {
@@ -111,11 +111,13 @@ const inflight = new Map<string, Job>();
 export async function searchBloodStock(
   q: SearchQuery,
   watcher?: Watcher,
-  opts: { maxAgeMinutes?: number } = {},
+  opts: { maxAgeMinutes?: number; agent?: boolean } = {},
 ): Promise<StockResult> {
-  const hit = await peek(q, opts.maxAgeMinutes);
-  if (hit) return hit;
-  const key = keyOf(q);
+  if (!opts.agent) {
+    const hit = await peek(q, opts.maxAgeMinutes);
+    if (hit) return hit;
+  }
+  const key = (opts.agent ? "agent:" : "") + keyOf(q);
   const running = inflight.get(key);
   if (running) {
     if (watcher) {
@@ -127,12 +129,12 @@ export async function searchBloodStock(
     return running.promise;
   }
   const job = { watchers: new Set(watcher ? [watcher] : []), started: false } as Job;
-  job.promise = run(q, job).finally(() => inflight.delete(key));
+  job.promise = run(q, job, !!opts.agent).finally(() => inflight.delete(key));
   inflight.set(key, job);
   return job.promise;
 }
 
-async function run(q: SearchQuery, job: Job): Promise<StockResult> {
+async function run(q: SearchQuery, job: Job, agent: boolean): Promise<StockResult> {
   const each = (f: (w: Watcher) => void) =>
     job.watchers.forEach((w) => {
       try {
@@ -148,9 +150,9 @@ async function run(q: SearchQuery, job: Job): Promise<StockResult> {
   each((w) => w.onStart?.());
 
   let result: StockResult | null = null;
-  // Our backstop sits 1 min after the web app's own 7-min deadline, which stops the run first.
+  // Backstop: fast path (≤ ~1.5 min) + the agent's own 7-min deadline fire first.
   try {
-    for await (const ev of runner(q, AbortSignal.timeout(SEARCH_DEADLINE_MS + 60_000))) {
+    for await (const ev of runner(q, AbortSignal.timeout(SEARCH_DEADLINE_MS + 120_000), { agent })) {
       if (ev.type === "STREAMING_URL" && ev.streaming_url) {
         job.streamingUrl = ev.streaming_url;
         each((w) => w.onStreamingUrl?.(ev.streaming_url!));

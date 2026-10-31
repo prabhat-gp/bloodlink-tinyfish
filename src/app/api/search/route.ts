@@ -1,6 +1,6 @@
 import { mockAgentRun, type Simulate } from "@/lib/mock/engine";
 import { MODE } from "@/lib/mode";
-import { liveAgentRun } from "@/lib/server/liveSearch";
+import { liveStockRun } from "@/lib/server/liveSearch";
 import type { AgentEvent } from "@/lib/types";
 import { parseQuery } from "@/lib/validate";
 
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
 
   const simulate = SIMULATE.has(params.simulate as Simulate) ? (params.simulate as Simulate) : "none";
   const events: AsyncGenerator<AgentEvent> =
-    MODE === "live" ? liveAgentRun(parsed.query, req.signal) : mockAgentRun(parsed.query, simulate);
+    MODE === "live" ? liveStockRun(parsed.query, req.signal, { agent: params.agent === "1" }) : mockAgentRun(parsed.query, simulate);
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({

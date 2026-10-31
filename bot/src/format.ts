@@ -210,6 +210,7 @@ function resultKeyboard(q: SearchQuery, found: boolean, more: boolean) {
     kb.text("🔔 Alert me if more appears", `a:${k}`).row();
     kb.text("🔄 Refresh", `r:${k}`).text("📤 Share", `sh:${k}`);
     if (more) kb.row().text("📋 Show all", `all:${k}`);
+    kb.row().text("👀 Watch the AI agent do it", `ag:${k}`);
   } else {
     kb.text("🔔 Alert me when it's available", `a:${k}`).row();
     if (NEIGHBOURS[q.district]) kb.text("🔍 Check nearby districts", `w:${k}`).row();
@@ -242,7 +243,7 @@ export function nearestMessage(r: StockResult, spot: Spot, donate = false): Msg 
   const comp = SHORT[q.component] ?? componentLabel(q.component);
   const lines = donate
     ? [`❤️ <b>Thank you for wanting to donate!</b>`, `Blood banks ${whereText(q, spot)}. Call ahead to check donation timings.`, ""]
-    : [`🏥 <b>Blood banks ${whereText(q, spot)} with blood in stock</b>`, ""];
+    : [`🏥 <b>Blood banks ${whereText(q, spot)}</b>`, ""];
   placed.slice(0, 6).forEach((p, i) => {
     const b = p.bank;
     const have = Object.entries(b.units)
@@ -251,7 +252,7 @@ export function nearestMessage(r: StockResult, spot: Spot, donate = false): Msg 
     const stock = have.length ? `${comp} in stock: ${have.join(" · ")}` : `No ${comp.toLowerCase()} listed`;
     lines.push(`${i + 1}. <b>${esc(b.name)}</b>${kmText(p.km)}`, `    🩸 ${stock} · ${freshText(b)}`, `    ${contactLine(b)}`, "");
   });
-  if (!placed.length) lines.push(`No blood bank in ${esc(districtName(q.district))} reports ${comp.toLowerCase()} in stock right now.`, "");
+  if (!placed.length) lines.push(`eRaktKosh lists no blood banks for ${esc(districtName(q.district))}.`, "");
   if (!spot.precise) lines.push("📍 Send your location or type your area to sort these by distance.", "");
   lines.push(`<i>Stock checked ${agoIso(r.checkedAt)}.</i>`);
   lines.push(FOOTER);
@@ -285,12 +286,18 @@ export const shareKeyboard = (text: string) => new InlineKeyboard().url("🟢 Sh
 
 // ---------- progress ----------
 
-export function statusText(q: SearchQuery, spot: Spot | undefined, s: { seconds: number; progress: string; queued: number; nearest?: boolean }) {
+export function statusText(
+  q: SearchQuery,
+  spot: Spot | undefined,
+  s: { seconds: number; progress: string; queued: number; nearest?: boolean; agent?: boolean },
+) {
   const what = s.nearest
     ? `🔎 Getting blood banks ${whereText(q, spot)} from eRaktKosh`
     : `🔎 Checking eRaktKosh for <b>${groupLabel(q.group)}</b> · ${componentLabel(q.component)} · ${whereText(q, spot)}`;
   const wait = s.queued ? `⏳ Waiting for a free agent (${s.queued} ahead)…` : `⏳ ${s.seconds}s · ${esc(s.progress)}`;
-  const hint = "An AI agent is filling in the government form for you. This takes 2–4 minutes; you can leave the chat, I'll message you.";
+  const hint = s.agent
+    ? "Showing the AI agent: it fills in the government form like a person would. 2–4 minutes; you can leave the chat, I'll message you."
+    : "Reading live stock from eRaktKosh through a TinyFish browser. Usually a few seconds (up to ~30 s for the first search).";
   return [what, wait, `<i>${hint}</i>`].join("\n");
 }
 export const watchKeyboard = (url: string) => new InlineKeyboard().url("👀 Watch the agent live", url);
@@ -315,7 +322,7 @@ export const help = (): Msg => ({
   text: [
     "<b>How BloodLink works</b>",
     "1. Tell me the blood group and area, e.g. <i>O- near Koramangala</i>. I'll ask for anything missing.",
-    `2. An AI agent (TinyFish) checks the government's eRaktKosh portal live. 2–4 minutes, or instant if someone searched the same in the last ${config.cacheTtlMinutes} min.`,
+    `2. I read the government's eRaktKosh portal live through a TinyFish browser. A few seconds, or instant if someone searched the same in the last ${config.cacheTtlMinutes} min.`,
     "3. You get blood banks with stock, phone numbers, map links and how fresh their data is.",
     "",
     "<b>Also</b>",

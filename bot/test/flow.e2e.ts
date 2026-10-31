@@ -15,10 +15,11 @@ setPersistence(false);
 
 // ---------- fake agent ----------
 
-const agent = { runs: 0, empty: new Set<string>(), appear: false };
+const agent = { runs: 0, empty: new Set<string>(), appear: false, lastAgent: false };
 const ist = (ms: number) => new Date(ms + 5.5 * 3_600_000).toISOString().replace("T", " ").slice(0, 19);
-const runner: Runner = async function* (q): AsyncGenerator<AgentEvent> {
+const runner: Runner = async function* (q, _signal, opts): AsyncGenerator<AgentEvent> {
   agent.runs++;
+  agent.lastAgent = !!opts?.agent;
   const t = () => new Date().toISOString();
   yield { type: "STARTED", run_id: "run1", timestamp: t() };
   yield { type: "STREAMING_URL", run_id: "run1", streaming_url: "https://live.example/run1", timestamp: t() };
@@ -223,7 +224,16 @@ describe("conversation", () => {
 
   it("status message says how long a live search takes", async () => {
     const cs = await send(text("need AB- blood in Hubli"));
-    expect(texts(cs)[0]).toMatch(/2–4 minutes/);
+    expect(texts(cs)[0]).toMatch(/a few seconds/);
+  });
+
+  it("👀 Watch the AI agent: always a new run, with the agent flag", async () => {
+    await send(text("O- near HSR"));
+    expect(buttons(last(await send(text("O- near HSR"))))).toContain("ag:O-:11:572");
+    const cs = await send(tap("ag:O-:11:572"));
+    expect(texts(cs)[0]).toMatch(/Showing the AI agent/);
+    expect(agent.runs).toBe(2);
+    expect(agent.lastAgent).toBe(true);
   });
 
   it("outside coverage, by text or by pin", async () => {
