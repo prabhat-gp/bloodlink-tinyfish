@@ -1,9 +1,11 @@
 import type { AgentEvent, SearchQuery } from "../types";
 import { agentRequest, errorText, lastGood, normaliseResult, saveGood } from "./agent";
 import { canSpend, recordSpend } from "./budget";
-import { getRun, runSse, TinyFishError } from "./tinyfish";
+import { cancelRun, getRun, runSse, TinyFishError } from "./tinyfish";
 
 export const EST_SEARCH_STEPS = 25;
+/** TinyFish did not enforce max_duration_seconds on the first live run, so we enforce our own. */
+export const SEARCH_DEADLINE_MS = 420_000;
 
 const iso = () => new Date().toISOString();
 const str = (v: unknown) => (typeof v === "string" ? v : undefined);
@@ -22,8 +24,18 @@ export async function* liveAgentRun(q: SearchQuery, signal: AbortSignal): AsyncG
   let progressCount = 0;
   let failure: string | null = null;
 
+  // Our own controller: aborts on the user's signal or on our deadline.
+  const ctrl = new AbortController();
+  const onAbort = () => ctrl.abort();
+  signal.addEventListener("abort", onAbort);
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    ctrl.abort();
+  }, SEARCH_DEADLINE_MS);
+
   try {
-    for await (const ev of runSse(agentRequest(q), signal)) {
+    for await (const ev of runSse(agentRequest(q), ctrl.signal)) {
       const type = str(ev.type);
       runId = str(ev.run_id) ?? runId;
       if (type === "STARTED") yield { type: "STARTED", run_id: runId, timestamp: iso() };
@@ -49,12 +61,20 @@ export async function* liveAgentRun(q: SearchQuery, signal: AbortSignal): AsyncG
     }
     failure = "The agent stream ended without a result.";
   } catch (e) {
-    if (signal.aborted) return;
-    failure = e instanceof TinyFishError ? e.message : "Live search failed.";
+    failure = timedOut
+      ? "eRaktKosh took too long (over 7 minutes), so the agent was stopped."
+      : e instanceof TinyFishError
+        ? e.message
+        : "Live search failed.";
+  } finally {
+    clearTimeout(timer);
+    signal.removeEventListener("abort", onAbort);
   }
-  // Stream died before COMPLETE: charge what we saw, then fall back.
+  // Stream ended before COMPLETE (user left, deadline, network): stop the run, charge what it used.
+  if (runId) await cancelRun(runId);
   const steps = runId ? await stepsFor(runId, {}, progressCount) : 0;
   if (steps) await recordSpend(steps);
+  if (signal.aborted) return;
   yield* fallback(q, runId, failure ?? "Live search failed.", steps);
 }
 

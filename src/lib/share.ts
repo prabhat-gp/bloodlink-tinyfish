@@ -25,3 +25,11 @@ export function shareMessage(group: BloodGroup, component: string, banks: Bank[]
 export const whatsappUrl = (text: string) => `https://wa.me/?text=${encodeURIComponent(text)}`;
 export const mapsUrl = (b: Bank) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${b.name} ${b.address}`.slice(0, 200))}`;
+
+export const TELEGRAM_BOT = "BloodLinkIndiaBot";
+
+/** Deep link into the Telegram bot, same payload the bot parses: "Oneg_11_572", "alert_Oneg_11_572". */
+export function telegramUrl(q: { group: string; component: string; district: string }, alert = false) {
+  const g = q.group.replace("+", "pos").replace("-", "neg");
+  return `https://t.me/${TELEGRAM_BOT}?start=${alert ? "alert_" : ""}${g}_${q.component}_${q.district}`;
+}

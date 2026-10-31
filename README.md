@@ -1,6 +1,6 @@
 # BloodLink (app)
 
-Problem, design and pitch: see [`BLOODLINK.md`](BLOODLINK.md).
+Problem, design and pitch: see [`BLOODLINK.md`](BLOODLINK.md). Web app ↔ Telegram bot contract: [`SYNC.md`](SYNC.md) (read before touching `src/lib`).
 
 ## Run
 
@@ -47,14 +47,15 @@ Guard rails: whitelisted inputs (`validate.ts`), `output_schema` + result valida
 | P0 Scaffold | ✅ |
 | P1 Core logic | ✅ parser, freshness, ranking, share text, input whitelist, agent goal |
 | P2 UI on mock | ✅ |
-| P3 TinyFish layer | ✅ written and unit-tested against a fake client. **Not yet run against the real API** (needs the key). |
+| P3 TinyFish layer | ✅ live on 31 Oct 2026: real searches (Bangalore Urban O− → 3 banks, 10 steps; Mysore O+ → none, 8 steps), Datasets (250 banks, all 31 districts), Research (Bombay guide, 35 sources). |
 | P4 UI redesign | ✅ dark hero, browser-frame agent view, API tags, features section, mobile layout |
 | P5 Demo-proofing | ✅ simulate chips, last-good cache fallback, spend caps, setup script |
+| P6 Go-live | ✅ all 31 Karnataka districts, agent filters the stock table to in-stock rows, overrunning/abandoned runs cancelled, "How it works" API showcase, partners section |
 
 ## Known limits
 
-- Live shapes follow the docs; the first real run may need small field-name fixes (`streaming_url`, `num_of_steps`). `liveSearch.ts` already reads common variants.
+- A live search takes 2–4 minutes when eRaktKosh is slow (~25 s per agent step). The server stops a run after 7 minutes.
 - "Keep looking" re-runs from the open tab (webhooks need public https; localhost can't receive them).
-- Karnataka districts only. Mock pairings of bank ↔ units are not real (clearly labelled "Demo data").
+- Karnataka only (all 31 districts). Mock pairings of bank ↔ units are not real (clearly labelled "Demo data").
 
 In demo mode the form shows **simulate** chips (Normal / Nothing in stock / Site error / Slow site). "Nothing in stock" empties only the first search, so Widen then finds stock nearby. "Keep looking" makes stock appear on the 2nd check (every 30 s).

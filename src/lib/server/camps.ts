@@ -11,9 +11,9 @@ export function toCamps(results: SearchResult[]): Camp[] {
     .filter((r) => (seen.has(r.url) ? false : (seen.add(r.url), true)))
     .slice(0, 6)
     .map((r) => ({
-      title: r.title,
+      title: plain(r.title),
       date: r.date ? r.date.slice(0, 10) : "",
-      place: r.snippet?.slice(0, 90) ?? "",
+      place: plain(r.snippet ?? "").slice(0, 90),
       organiser: r.publisher ?? r.site_name ?? new URL(r.url).hostname,
       url: r.url,
     }));
@@ -27,3 +27,11 @@ export interface MonitorState {
   lastRunAt?: string;
   camps: Camp[];
 }
+
+/** Search snippets carry markdown and emoji; the card wants plain text. */
+const plain = (s: string) =>
+  s
+    .replace(/[*_#`>]+/g, "")
+    .replace(/\p{Extended_Pictographic}\uFE0F?/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();

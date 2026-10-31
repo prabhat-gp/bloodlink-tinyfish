@@ -36,7 +36,7 @@ export function agentRequest(q: SearchQuery): AgentRequest {
     output_schema: OUTPUT_SCHEMA,
     browser_profile: "stealth",
     proxy_config: { enabled: true, country_code: "IN" },
-    agent_config: { max_duration_seconds: 240 },
+    agent_config: { max_duration_seconds: 400 },
   };
 }
 

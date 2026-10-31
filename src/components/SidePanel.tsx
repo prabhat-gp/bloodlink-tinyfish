@@ -21,6 +21,7 @@ interface Entry {
   name: string;
   phone: string | null;
   area: string | null;
+  district: string | null;
 }
 
 /** Small "which TinyFish API powers this" tag. */
@@ -188,10 +189,34 @@ function CampsCard({ mock }: { mock: boolean }) {
   );
 }
 
-function DirectoryCard() {
+/** The dataset uses new Kannada spellings ("Mysuru", "Shivamogga"); eRaktKosh uses the old ones. */
+const SPELLINGS: [RegExp, string][] = [
+  [/bengaluru/g, "bangalore"],
+  [/mysuru/g, "mysore"],
+  [/shivamogga/g, "shimoga"],
+  [/chikkamagaluru/g, "chikmagalur"],
+  [/tumakuru/g, "tumkur"],
+  [/bagalkote/g, "bagalkot"],
+  [/kalburgi|gulbarga/g, "kalaburagi"],
+  [/bellary/g, "ballari"],
+  [/belgaum/g, "belagavi"],
+  [/bijapur/g, "vijayapura"],
+  [/chikballapur(a)?/g, "chikkaballapura"],
+];
+const normDistrict = (s: string) =>
+  SPELLINGS.reduce((acc, [re, to]) => acc.replace(re, to), s.toLowerCase())
+    .replace(/district/g, "")
+    .replace(/[^a-z]/g, "");
+const sameDistrict = (a: string, b: string) => normDistrict(a) === normDistrict(b);
+
+function DirectoryCard({ district }: { district: string }) {
   const { data, error } = useJson<{ entries: Entry[]; source: string }>("/api/directory");
   const [all, setAll] = useState(false);
-  const entries = (data?.entries ?? []).filter((e) => e.phone);
+  const withPhone = (data?.entries ?? []).filter((e) => e.phone);
+  const local = withPhone.filter((e) => e.district && sameDistrict(e.district, district));
+  // Fall back to the whole state when the dataset has nobody for this district.
+  const entries = local.length ? local : withPhone;
+  const scope = local.length ? district : "Karnataka";
   return (
     <section id="directory" className="card scroll-mt-6 p-5">
       <div className="flex items-center justify-between">
@@ -200,17 +225,21 @@ function DirectoryCard() {
           <Table className="h-3 w-3" /> {data?.source === "dataset" ? "Datasets" : "Snapshot"}
         </ApiTag>
       </div>
-      <p className="mt-0.5 text-xs text-zinc-500">Bengaluru · call directly if search is down</p>
+      <p className="mt-0.5 text-xs text-zinc-500">
+        {scope} · {entries.length} banks · call directly if search is down
+      </p>
       {error && <p className="mt-3 text-xs text-amber-700">Directory unavailable.</p>}
       {!data && !error && <div className="mt-3 h-24 animate-pulse rounded-lg bg-zinc-100" />}
-      <ul className="mt-3 divide-y divide-zinc-100">
-        {entries.slice(0, all ? 60 : 6).map((d) => (
-          <li key={d.name} className="flex items-center justify-between gap-3 py-2">
+      <ul className={`scrollbar-thin mt-3 divide-y divide-zinc-100 ${all ? "max-h-96 overflow-y-auto" : ""}`}>
+        {entries.slice(0, all ? 300 : 6).map((d, i) => (
+          <li key={`${d.name}-${i}`} className="flex items-center justify-between gap-3 py-2">
             <span className="min-w-0">
               <span className="block truncate text-[13px] text-zinc-800" title={d.name}>
                 {d.name}
               </span>
-              {d.area && <span className="block truncate text-[11px] text-zinc-400">{d.area}</span>}
+              {(d.area || d.district) && (
+                <span className="block truncate text-[11px] text-zinc-400">{[d.area, scope === "Karnataka" ? d.district : null].filter(Boolean).join(" · ")}</span>
+              )}
             </span>
             <a
               href={`tel:${d.phone}`}
@@ -231,12 +260,12 @@ function DirectoryCard() {
   );
 }
 
-export function SidePanel({ group, mock }: { group: BloodGroup; mock: boolean }) {
+export function SidePanel({ group, district, mock }: { group: BloodGroup; district: string; mock: boolean }) {
   return (
     <aside className="space-y-4">
       {group.startsWith("Oh") && <BombayCard />}
       <CampsCard mock={mock} />
-      <DirectoryCard />
+      <DirectoryCard district={district} />
     </aside>
   );
 }
