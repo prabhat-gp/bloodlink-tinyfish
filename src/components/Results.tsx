@@ -95,7 +95,7 @@ export function Results({ outcome, group, district, component, onWiden, widening
               <Layers className="h-4 w-4" />
               {widening ? "7 agents searching in parallel…" : "Widen: nearby districts + other components"}
             </button>
-            <p className="mt-2 text-xs text-zinc-400">Runs up to 7 TinyFish agents in parallel.</p>
+            <p className="mt-2 text-xs text-zinc-500">Runs up to 7 TinyFish agents in parallel.</p>
           </div>
         </div>
       )}

@@ -49,7 +49,7 @@ export function WidenPanel({
                   <Check className="h-3.5 w-3.5" /> {r.banks.filter((b) => b.hasRequested).length} with {group}
                 </span>
               )}
-              {r.status === "empty" && <span className="text-zinc-400">None</span>}
+              {r.status === "empty" && <span className="text-zinc-500">None</span>}
               {r.status === "failed" && (
                 <span className="inline-flex min-w-0 items-center gap-1 text-amber-800" title={r.reason}>
                   <Alert className="h-3.5 w-3.5 shrink-0" /> <span className="truncate">{r.reason ?? "Failed"}</span>

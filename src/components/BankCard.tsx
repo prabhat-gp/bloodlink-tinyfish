@@ -58,16 +58,16 @@ export function BankCard({ bank, group, rank, baseComponent }: { bank: Bank; gro
       <div className="flex gap-4 p-4 sm:p-5">
         <div
           className={`grid h-16 w-16 shrink-0 place-items-center rounded-2xl text-center ${
-            bank.hasRequested ? "bg-blood-50 text-blood-700" : "bg-zinc-100 text-zinc-400"
+            bank.hasRequested ? "bg-blood-50 text-blood-700" : "bg-zinc-100 text-zinc-500"
           }`}
         >
           {bank.hasRequested ? (
             <div>
               <div className="text-2xl leading-none font-bold tabular-nums">{bank.requestedUnits ?? "✓"}</div>
-              <div className="mt-1 text-[10px] font-semibold tracking-wide uppercase">{bank.requestedUnits === null ? "in stock" : "units"}</div>
+              <div className="mt-1 text-xs font-semibold tracking-wide uppercase">{bank.requestedUnits === null ? "in stock" : "units"}</div>
             </div>
           ) : (
-            <div className="text-[11px] leading-tight font-semibold">
+            <div className="text-xs leading-tight font-semibold">
               No
               <br />
               {group}
@@ -86,7 +86,7 @@ export function BankCard({ bank, group, rank, baseComponent }: { bank: Bank; gro
             {bank.address || districtName(bank.district)}
           </p>
 
-          <div className="mt-2.5 flex flex-wrap gap-1.5 text-[11.5px] font-medium">
+          <div className="mt-2.5 flex flex-wrap gap-1.5 text-[12.5px] font-medium">
             <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 ring-1 ring-inset ${f.cls}`} title={bank.lastUpdated ? `${bank.lastUpdated} IST` : ""}>
               <span className={`h-1.5 w-1.5 rounded-full ${f.dot}`} />
               {f.label} · {age(bank.ageHours)}

@@ -64,7 +64,7 @@ export function Sponsors() {
                     <p className="text-2xl font-semibold tracking-tight">
                       <CountUp to={s.n} start={inView} prefix={s.p} />
                     </p>
-                    <p className="mt-0.5 text-[11px] leading-tight text-white/50">{s.l}</p>
+                    <p className="mt-0.5 text-xs leading-tight text-white/50">{s.l}</p>
                   </div>
                 ))}
               </div>

@@ -26,7 +26,7 @@
   --color-zinc-700: #46382f;
   --color-zinc-800: #34261f;
   --color-zinc-900: #2a1a14;
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --animate-scan: scan 2.4s ease-in-out infinite;
   --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -98,11 +98,16 @@ body {
   background: var(--color-canvas);
   color: var(--color-zinc-900);
   font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  font-feature-settings: "ss01", "cv05";
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3 {
-  font-weight: 650;
-  letter-spacing: -0.025em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
   text-wrap: balance;
 }
 p {

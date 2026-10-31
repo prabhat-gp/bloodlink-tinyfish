@@ -27,7 +27,7 @@ interface Entry {
 /** Small "which TinyFish API powers this" tag. */
 export function ApiTag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-[10.5px] font-semibold tracking-wide text-zinc-500 uppercase">
+    <span className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-semibold tracking-wide text-zinc-500 uppercase">
       {children}
     </span>
   );
@@ -75,7 +75,7 @@ function BombayCard() {
             <ol className="space-y-2 text-[13px] text-zinc-700">
               {(data.steps.length ? data.steps : [data.summary]).slice(0, 5).map((s, i) => (
                 <li key={i} className="flex gap-2.5">
-                  <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-blood-50 text-[11px] font-bold text-blood-700">{i + 1}</span>
+                  <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-blood-50 text-xs font-bold text-blood-700">{i + 1}</span>
                   <span>{s}</span>
                 </li>
               ))}
@@ -89,7 +89,7 @@ function BombayCard() {
                     target="_blank"
                     rel="noreferrer"
                     title={c.title}
-                    className="inline-flex max-w-full items-center gap-1 truncate rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] text-zinc-600 hover:bg-zinc-200"
+                    className="inline-flex max-w-full items-center gap-1 truncate rounded-md bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 hover:bg-zinc-200"
                   >
                     [{i + 1}] {new URL(c.url).hostname.replace(/^www\./, "")}
                   </a>
@@ -146,7 +146,7 @@ function CampsCard({ mock }: { mock: boolean }) {
             <div className="flex items-start justify-between gap-2">
               <span className="text-[13px] leading-snug font-medium text-zinc-800">{c.title}</span>
               {c.url && (
-                <a href={c.url} target="_blank" rel="noreferrer" aria-label="Open source" className="shrink-0 text-zinc-400 hover:text-zinc-700">
+                <a href={c.url} target="_blank" rel="noreferrer" aria-label="Open source" className="shrink-0 text-zinc-500 hover:text-zinc-700">
                   <External className="h-3.5 w-3.5" />
                 </a>
               )}
@@ -159,7 +159,7 @@ function CampsCard({ mock }: { mock: boolean }) {
       </ul>
 
       <div className="mt-3 flex items-center gap-2 rounded-xl border border-dashed border-zinc-200 p-3">
-        <Radar className={`h-4 w-4 shrink-0 ${monitor ? "text-emerald-600" : "text-zinc-400"}`} />
+        <Radar className={`h-4 w-4 shrink-0 ${monitor ? "text-emerald-600" : "text-zinc-500"}`} />
         <div className="min-w-0 flex-1 text-xs">
           {monitor ? (
             <>
@@ -238,7 +238,7 @@ function DirectoryCard({ district }: { district: string }) {
                 {d.name}
               </span>
               {(d.area || d.district) && (
-                <span className="block truncate text-[11px] text-zinc-400">{[d.area, scope === "Karnataka" ? d.district : null].filter(Boolean).join(" · ")}</span>
+                <span className="block truncate text-xs text-zinc-500">{[d.area, scope === "Karnataka" ? d.district : null].filter(Boolean).join(" · ")}</span>
               )}
             </span>
             <a

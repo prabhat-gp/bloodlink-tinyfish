@@ -36,7 +36,7 @@ export function AgentPanel({ state, progress, streamingUrl, mock }: Props) {
           <span className="truncate">eraktkosh.mohfw.gov.in/BLDAHIMS/bloodbank/stockAvailability.cnt</span>
         </div>
         <span
-          className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide uppercase ${
+          className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold tracking-wide uppercase ${
             running ? "bg-blood-600/20 text-blood-300" : state === "done" ? "bg-emerald-500/15 text-emerald-300" : "bg-white/10 text-white/50"
           }`}
         >
@@ -81,14 +81,14 @@ export function AgentPanel({ state, progress, streamingUrl, mock }: Props) {
                     ? last ?? "Starting agent…"
                     : "Run complete. Results below."}
               </p>
-              {mock && state !== "done" && <p className="text-[11px] text-white/40">Live browser video streams here in live mode</p>}
+              {mock && state !== "done" && <p className="text-xs text-white/40">Live browser video streams here in live mode</p>}
             </div>
           </div>
         )}
       </div>
 
       {progress.length > 0 && (
-        <ol ref={logRef} className="scrollbar-thin max-h-36 space-y-1 overflow-y-auto border-t border-white/10 px-4 py-3 font-mono text-[11.5px] text-white/60">
+        <ol ref={logRef} className="scrollbar-thin max-h-36 space-y-1 overflow-y-auto border-t border-white/10 px-4 py-3 font-mono text-[12.5px] text-white/60">
           {progress.map((p, i) => (
             <li key={i} className="flex gap-3 animate-rise">
               <span className="shrink-0 text-white/30 tabular-nums">{p.at}</span>

@@ -230,7 +230,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
                   </div>
                 ))}
               </dl>
-              <p className="mt-3 text-[11px] text-zinc-400">eRaktKosh, Bangalore Urban, 31 Oct 2026</p>
+              <p className="mt-3 text-xs text-zinc-500">eRaktKosh, Bangalore Urban, 31 Oct 2026</p>
             </div>
 
           </div>

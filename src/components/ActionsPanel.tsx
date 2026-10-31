@@ -25,7 +25,7 @@ export function ActionsPanel({ group, component, district, banks, watching, onTo
     <section className="grid gap-3 pt-2 md:grid-cols-2">
       <div className="card flex flex-col p-5">
         <h2 className="flex items-center gap-2 font-semibold text-zinc-900">
-          <Share className="h-4 w-4 text-zinc-400" /> Share with family &amp; donors
+          <Share className="h-4 w-4 text-zinc-500" /> Share with family &amp; donors
         </h2>
         <pre className="mt-3 max-h-36 flex-1 overflow-auto rounded-xl bg-zinc-50 p-3 font-sans text-xs leading-relaxed whitespace-pre-wrap text-zinc-700">
           {text}
@@ -59,7 +59,7 @@ export function ActionsPanel({ group, component, district, banks, watching, onTo
 
       <div className={`card flex flex-col p-5 ${found ? "ring-2 ring-emerald-400" : ""}`}>
         <h2 className="flex items-center gap-2 font-semibold text-zinc-900">
-          <Bell className="h-4 w-4 text-zinc-400" /> Keep looking
+          <Bell className="h-4 w-4 text-zinc-500" /> Keep looking
         </h2>
         <p className="mt-1.5 flex-1 text-sm text-zinc-600">
           Re-runs this search every {mock ? "30 seconds (demo speed)" : "30 minutes"}, up to 6 times, and alerts you here the
