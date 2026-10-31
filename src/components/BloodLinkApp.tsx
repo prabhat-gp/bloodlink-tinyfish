@@ -14,6 +14,7 @@ import { Alert, DropSolid, Fish } from "./icons";
 import { Results } from "./Results";
 import { SearchForm } from "./SearchForm";
 import { SidePanel } from "./SidePanel";
+import { ThemeToggle } from "./ThemeToggle";
 import { Sponsors } from "./Sponsors";
 import { WidenPanel } from "./WidenPanel";
 
@@ -148,11 +149,12 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
 
   const busy = state === "running";
   const pct = Math.min(100, (stepsUsed / stepCap) * 100);
+  const hasResults = !!(outcome && submitted);
 
   return (
     <div id="top" className="min-h-screen">
       {/* ---------- Hero ---------- */}
-      <div className="hero-bg relative overflow-hidden text-ink">
+      <div className="hero-bg relative overflow-hidden text-zinc-900">
         <div className="hero-grid pointer-events-none absolute inset-0" />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <nav className="flex items-center justify-between gap-3 py-5">
@@ -163,10 +165,10 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
               <span className="serif text-[22px] tracking-tight">Blood<i className="text-blood-600">Link</i></span>
             </div>
             <div className="flex items-center gap-2 text-xs">
-              <a href="#how" className="hidden rounded-full px-3 py-1.5 font-medium text-zinc-500 transition hover:bg-ink/5 hover:text-ink sm:inline">
+              <a href="#how" className="hidden rounded-full px-3 py-1.5 font-medium text-zinc-500 transition hover:bg-ink/5 hover:text-zinc-900 sm:inline">
                 How it works
               </a>
-              <a href="#sponsors" className="hidden rounded-full px-3 py-1.5 font-medium text-zinc-500 transition hover:bg-ink/5 hover:text-ink sm:inline">
+              <a href="#sponsors" className="hidden rounded-full px-3 py-1.5 font-medium text-zinc-500 transition hover:bg-ink/5 hover:text-zinc-900 sm:inline">
                 Partners
               </a>
               {mock && (
@@ -185,6 +187,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
                   ${estimateCost(stepsUsed).toFixed(2)} / ${estimateCost(stepCap).toFixed(2)}
                 </span>
               </span>
+              <ThemeToggle />
               <span className="hidden items-center gap-1.5 text-zinc-500 md:inline-flex">
                 <Fish className="h-3.5 w-3.5" /> TinyFish
               </span>
@@ -248,7 +251,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
           </Banner>
         )}
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
+        <div className={hasResults ? "grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_340px]" : "grid grid-cols-1 gap-8"}>
           <main className="min-w-0 space-y-6">
             <AgentPanel state={state} progress={progress} streamingUrl={streamingUrl} mock={mock} />
 
@@ -295,7 +298,12 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
             )}
           </main>
 
-          <SidePanel group={submitted?.group ?? query.group} district={districtName(submitted?.district ?? query.district)} mock={mock} />
+          <SidePanel
+            group={submitted?.group ?? query.group}
+            district={districtName(submitted?.district ?? query.district)}
+            mock={mock}
+            row={!hasResults}
+          />
         </div>
       </div>
 

@@ -260,9 +260,9 @@ function DirectoryCard({ district }: { district: string }) {
   );
 }
 
-export function SidePanel({ group, district, mock }: { group: BloodGroup; district: string; mock: boolean }) {
+export function SidePanel({ group, district, mock, row = false }: { group: BloodGroup; district: string; mock: boolean; row?: boolean }) {
   return (
-    <aside className="space-y-4">
+    <aside className={row ? "grid items-start gap-6 md:grid-cols-2" : "space-y-5 lg:sticky lg:top-6"}>
       {group.startsWith("Oh") && <BombayCard />}
       <CampsCard mock={mock} />
       <DirectoryCard district={district} />

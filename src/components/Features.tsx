@@ -180,7 +180,7 @@ export function Features() {
           {[...STACK, ...STACK].map((s, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blood-300 hover:text-blood-700"
+              className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-paper px-3.5 py-1.5 text-xs font-semibold text-zinc-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blood-300 hover:text-blood-700"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-blood-500" />
               {s}
@@ -550,7 +550,7 @@ function SearchFetchVisual({ p }: { p: number }) {
             </In>
           ))}
         </div>
-        <In show={fetched} className="rounded-lg bg-white p-3 text-zinc-700 shadow-xl">
+        <In show={fetched} className="rounded-lg bg-paper p-3 text-zinc-700 shadow-xl">
           <p className="text-[10px] font-semibold text-zinc-400"># Blood Centre · markdown</p>
           <p className="mt-1.5 text-[10px] leading-relaxed">
             Our 24×7 blood centre is on the second floor. For requests call{" "}
@@ -582,7 +582,7 @@ function MonitorVisual({ p }: { p: number }) {
       <div className="flex items-center gap-4">
         <div className="relative grid h-16 w-16 shrink-0 place-items-center rounded-full bg-white/[0.04] ring-1 ring-white/15">
           <span className="absolute top-1/2 left-1/2 h-6 w-0.5 origin-bottom -translate-x-1/2 -translate-y-full rounded bg-blood-400" style={{ transform: `translate(-50%,-100%) rotate(${cursor * 7 * 360}deg)` }} />
-          <span className="h-1.5 w-1.5 rounded-full bg-white" />
+          <span className="h-1.5 w-1.5 rounded-full bg-paper" />
         </div>
         <div>
           <p className="font-mono text-[11px] text-white/60">CRON_TZ=Asia/Kolkata 0 8 * * *</p>
@@ -656,7 +656,7 @@ function DatasetVisual({ p }: { p: number }) {
               style={isLit ? { background: `rgb(244 42 80 / ${heat})` } : undefined}
             >
               {d.split(" ").map((w) => w[0]).join("")}
-              <span className="pointer-events-none absolute -top-7 left-1/2 hidden -translate-x-1/2 rounded bg-white px-1.5 py-0.5 text-[9px] whitespace-nowrap text-zinc-800 shadow group-hover:block">
+              <span className="pointer-events-none absolute -top-7 left-1/2 hidden -translate-x-1/2 rounded bg-paper px-1.5 py-0.5 text-[9px] whitespace-nowrap text-zinc-800 shadow group-hover:block">
                 {d} · {c}
               </span>
             </span>
@@ -707,7 +707,7 @@ function ResearchVisual({ p }: { p: number }) {
       ))}
       <span className="absolute top-3 left-1/2 -translate-x-1/2 font-mono text-[10px] text-white/50 tabular-nums">{sources} sources read</span>
       <div
-        className={`absolute top-1/2 left-1/2 w-44 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-3 text-zinc-800 shadow-2xl transition duration-500 sm:w-52 ${on(p, 0.45) ? "scale-100 opacity-100" : "scale-90 opacity-0"}`}
+        className={`absolute top-1/2 left-1/2 w-44 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-paper p-3 text-zinc-800 shadow-2xl transition duration-500 sm:w-52 ${on(p, 0.45) ? "scale-100 opacity-100" : "scale-90 opacity-0"}`}
       >
         <p className="text-[10px] font-semibold tracking-wide text-blood-600 uppercase">Bombay (Oh) plan</p>
         {steps.map((s, i) => (

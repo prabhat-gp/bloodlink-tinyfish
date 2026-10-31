@@ -122,7 +122,7 @@ export function Sponsors() {
             </p>
             <a
               href="#top"
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/10 active:translate-y-0"
+              className="inline-flex items-center gap-1.5 rounded-full bg-paper px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-white/10 active:translate-y-0"
             >
               Try a live search <ArrowRight className="h-4 w-4" />
             </a>
@@ -143,7 +143,7 @@ function Partner({ initials, name, role, body, stat }: { initials: string; name:
       style={{ "--spot": "rgb(255 255 255 / 0.08)" } as CSSProperties}
     >
       <div className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white font-bold tracking-tight text-ink transition duration-300 group-hover:rotate-[-6deg] group-hover:scale-105">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-paper font-bold tracking-tight text-zinc-900 transition duration-300 group-hover:rotate-[-6deg] group-hover:scale-105">
           {initials}
         </span>
         <span className="min-w-0">

@@ -44,7 +44,7 @@ function Select({
       <span className="mb-1.5 block text-xs font-medium tracking-wide text-zinc-500 uppercase">{label}</span>
       <span className="relative block">
         <select
-          className="w-full appearance-none rounded-xl border border-zinc-200 bg-zinc-50 py-3 pr-10 pl-3.5 text-[15px] font-medium text-zinc-900 transition outline-none hover:border-zinc-300 focus:border-blood-500 focus:bg-white focus:ring-4 focus:ring-blood-500/15"
+          className="w-full appearance-none rounded-xl border border-zinc-200 bg-zinc-50 py-3 pr-10 pl-3.5 text-[15px] font-medium text-zinc-900 transition outline-none hover:border-zinc-300 focus:border-blood-500 focus:bg-paper focus:ring-4 focus:ring-blood-500/15"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >

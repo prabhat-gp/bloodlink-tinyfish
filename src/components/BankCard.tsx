@@ -127,7 +127,7 @@ export function BankCard({ bank, group, rank, baseComponent }: { bank: Bank; gro
           href={mapsUrl(bank)}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-paper px-3 py-1.5 text-sm font-medium text-zinc-700 transition hover:border-zinc-300 hover:bg-zinc-50"
         >
           <MapPin className="h-3.5 w-3.5" /> Directions
         </a>

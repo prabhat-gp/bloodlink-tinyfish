@@ -5,9 +5,9 @@ import { Alert, Check } from "./icons";
 
 const STATUS = {
   found: "bg-emerald-50 ring-emerald-600/20",
-  empty: "bg-white ring-zinc-900/[0.07]",
+  empty: "bg-paper ring-zinc-900/[0.07]",
   failed: "bg-amber-50 ring-amber-600/20",
-  running: "bg-white ring-zinc-900/[0.07]",
+  running: "bg-paper ring-zinc-900/[0.07]",
 } as const;
 
 /** Grid of parallel agents; `pending` shows the targets while they run. */

@@ -97,7 +97,7 @@
 
 body {
   background: var(--color-canvas);
-  color: var(--color-ink);
+  color: var(--color-zinc-900);
   font-family: var(--font-sans);
 }
 
@@ -151,9 +151,49 @@ button:not(:disabled):active, a:active {
   box-shadow: 0 2px 4px rgb(42 26 20 / 0.05), 0 26px 50px -30px rgb(42 26 20 / 0.38);
 }
 
-/* Breathing room between big sections. */
+/* One rhythm between big sections (never stacks into a hole). */
 .section {
-  padding-block: clamp(3.5rem, 7vw, 6rem);
+  padding-block: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+/* Dark mode: same components, the tokens flip. Ink stays dark (dark panels, dark buttons with white text). */
+:root.dark {
+  color-scheme: dark;
+  --color-canvas: #16100d;
+  --color-paper: #201814;
+  --color-ink: #0e0907;
+  --color-zinc-50: #261c17;
+  --color-zinc-100: #2e231d;
+  --color-zinc-200: #3a2d26;
+  --color-zinc-300: #4c3c33;
+  --color-zinc-400: #7d6c61;
+  --color-zinc-500: #a8968a;
+  --color-zinc-600: #c2b2a6;
+  --color-zinc-700: #d8cabe;
+  --color-zinc-800: #e9ddd2;
+  --color-zinc-900: #f6ece3;
+  --color-blood-50: #2c1512;
+  --color-blood-100: #3d1915;
+  --color-blood-200: #5a221c;
+  --color-blood-600: #d2463a;
+  --color-blood-700: #e2685c;
+  --color-blood-800: #ef9488;
+}
+:root.dark .hero-bg {
+  background:
+    radial-gradient(48rem 26rem at 88% -8%, rgb(210 70 58 / 0.18), transparent 60%),
+    radial-gradient(36rem 22rem at -5% 105%, rgb(210 70 58 / 0.08), transparent 60%),
+    var(--color-canvas);
+}
+:root.dark .hero-grid {
+  background-image: radial-gradient(rgb(246 236 227 / 0.06) 1px, transparent 1px);
+}
+:root.dark .card {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 18px 40px -28px rgb(0 0 0 / 0.7);
+}
+:root.dark ::selection {
+  background: var(--color-blood-200);
+  color: #fff;
 }
 
 /* Cursor-following glow for cards; JS sets --mx/--my. */
