@@ -106,6 +106,7 @@ Add requests here, e.g. "bot needs X exported from src/lib".
 |---|---|---|
 | 31 Oct 10:20 | web | Initial push `a86e64d` (V1, mock + live layer). Branches `qa-web-app`, `qa-bot` created from it. |
 | 31 Oct ~11:50 | bot | `qa-bot`: `bot/` workspace, parser, places, end-to-end bot in mock mode (`48223e1`). |
+| 31 Oct ~15:20 | bot | Merged to `main`: prod clean-up (README, .env.example, dead code, eslint script), ultrareview dark-mode fixes (reds by job, WCAG AA), **Instrument Sans** typography + min 12px type scale, dark mode toggle. **Web session: pull `main` before UI work.** |
 | 31 Oct ~14:55 | bot | UI redesign "Editorial Warm" on `main` (user's pick C): Fraunces + Manrope, warm palette via theme tokens (blood-*, zinc-*, canvas, paper), cream hero, `.section` spacing, shorter How-it-works chapters, micro-interactions. **Web session: pull `main` before further UI work.** Untracked `public/ui-mockups/` on the bot laptop was left out (not ours). |
 | 31 Oct ~14:35 | bot | `main` fast-forwarded to `qa-bot` (web V1 + bot + fast search + Railway config). Deploys from `main` via the fork. Branch rules = section 0. |
 | 31 Oct ~13:55 | bot | Bot results get "🧪 Other component": all 8 `COMPONENTS` (same codes as the web dropdown), one tap each. Typed names (PRBC, PCV, SDP, RDP, FFP, cryo, SAGM, plasma, platelets) were already supported. |
