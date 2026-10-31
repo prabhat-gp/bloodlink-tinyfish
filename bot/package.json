@@ -1,0 +1,21 @@
+{
+  "name": "bloodlink-bot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BloodLink Telegram bot. Reuses the web app's search code in ../src/lib (read-only).",
+  "scripts": {
+    "dev": "cd .. && tsx watch --env-file-if-exists=.env.local --env-file-if-exists=bot/.env.local bot/src/index.ts",
+    "start": "cd .. && tsx --env-file-if-exists=.env.local --env-file-if-exists=bot/.env.local bot/src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "grammy": "^1.46.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}
