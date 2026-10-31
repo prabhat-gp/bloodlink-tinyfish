@@ -1,61 +1,55 @@
-# BloodLink (app)
+# BloodLink
 
-Problem, design and pitch: see [`BLOODLINK.md`](BLOODLINK.md). Web app ↔ Telegram bot contract: [`SYNC.md`](SYNC.md) (read before touching `src/lib`).
+Find a blood bank that has your blood group **in stock right now**, for all 31 districts of Karnataka.
+BloodLink reads the government's live eRaktKosh stock through TinyFish and ranks banks by stock, freshness and distance.
 
-## Run
+- **Web app:** https://bloodlink-tinyfish-production.up.railway.app
+- **Telegram bot:** [@BloodLinkIndiaBot](https://t.me/BloodLinkIndiaBot) (code and docs in [`bot/`](bot/README.md))
+- Problem, design and pitch: [`BLOODLINK.md`](BLOODLINK.md) · Bot plan: [`BLOOD_FINDER_TELEGRAM_PLAN.md`](BLOOD_FINDER_TELEGRAM_PLAN.md) · Team sync and branch rules: [`SYNC.md`](SYNC.md) (read before touching `src/lib`)
 
-```bash
-npm install
-cp .env.example .env.local      # BLOODLINK_MODE=mock by default: zero TinyFish credits
-npm run build && npx next start -p 3010   # or: npm run dev -- -p 3010  (port 3000 is taken)
-npm test                        # 29 unit tests (parser, ranking, live layer with a fake TinyFish)
-```
+## How a search works
 
-## Event day: going live (in this order)
+| Step | What | Time | Cost |
+|---|---|---|---|
+| 1 | **Fast path:** a TinyFish Browser API session (India proxy) opens eRaktKosh and calls the site's own stock request from inside the page. The browser stays warm for 10 minutes. | ~2 s warm, ~15 s cold | ~$0.002/min while open |
+| 2 | Backup: the same request straight from our server | <1 s | free |
+| 3 | Fallback and showcase: the TinyFish **AI agent** fills the form (`run-sse`, live stream; stopped after 7 min) | 2–4 min | ~$0.15 (8–10 steps) |
 
-| # | Step | Cost |
-|---|---|---|
-| 1 | Put `TINYFISH_API_KEY=` in `.env.local` (keep `BLOODLINK_MODE=mock` for now) | – |
-| 2 | `npm run setup -- check` (one Search call proves the key works) | free |
-| 3 | Paste `buildGoal()` + the `OUTPUT_SCHEMA` (in `src/lib/server/agent.ts`) into the TinyFish playground once on eRaktKosh and check the JSON | ~$0.40 |
-| 4 | `npm run setup -- dataset`: Bengaluru blood bank directory (re-run to keep waiting; reuses the id) | free (3/day) |
-| 5 | `npm run setup -- research`: Bombay-group guide, cached to `.data/research.json` | free (2/day) |
-| 6 | Set `BLOODLINK_MODE=live`, rebuild, restart on 3010 | – |
-| 7 | One live search (Bangalore Urban, O−, Whole Blood). It also seeds the last-good cache used as a fallback. | ~$0.40 |
-| 8 | In the app, Donation camps → **Turn on** creates the daily Monitor | $0.005/run |
-| 9 | `npm run setup -- status` shows what is in `.data/` | free |
-
-Budget: one search is about 25 steps ($0.40). Widen is up to 7 × ~20 steps ($2.24). The server ledger refuses runs above `BLOODLINK_DAILY_STEP_CAP`.
-
-## Which TinyFish API does what
+The same `liveStockRun()` (`src/lib/server/liveSearch.ts`) serves the web app and the bot. Results are cached 15 minutes per district + component + group.
 
 | Feature | TinyFish API | Where |
 |---|---|---|
-| Live stock search + live browser view | Web Agent `run-sse` (`STREAMING_URL` → iframe) | `src/lib/server/liveSearch.ts`, `/api/search` |
-| Widen to nearby districts / components | Web Agent `run-async` × 7 + `GET /v1/runs/{id}` polling | `/api/expand` |
-| Find more contacts for a bank | Search + Fetch (free) | `/api/enrich` |
-| Donation camps | Search (free, cached 1 h), then Monitor once created | `/api/camps`, `/api/monitor` |
-| Blood bank directory | Datasets | `/api/directory`, `npm run setup -- dataset` |
-| Bombay (Oh) guide | Research (deep) | `/api/research`, `npm run setup -- research` |
+| Live stock search | Browser API, Web Agent as fallback (`?agent=1` forces it) | `src/lib/server/fastStock.ts`, `liveSearch.ts`, `/api/search` |
+| Widen to nearby districts / components | Web Agent `run-async` + `GET /v1/runs/{id}` | `/api/expand` |
+| More contacts for a bank | Search + Fetch (free) | `/api/enrich` |
+| Donation camps | Search (cached 1 h), then Monitor | `/api/camps`, `/api/monitor` |
+| Blood bank directory | Datasets (250 banks, all 31 districts) | `/api/directory`, `npm run setup -- dataset` |
+| Bombay (Oh) guide | Research | `/api/research`, `npm run setup -- research` |
 
-Guard rails: whitelisted inputs (`validate.ts`), `output_schema` + result validation (COMPLETED ≠ success), server spend ledger (`.data/budget.json`), last-good fallback clearly labelled "cached", key never sent to the browser.
+Guard rails: whitelisted inputs (`validate.ts`), output schema + result validation (COMPLETED ≠ success), a server spend ledger with a daily cap (`.data/budget.json`), a last-good fallback labelled "cached", and the API key never reaches the browser.
 
-## Status
+## Run locally
 
-| Phase | State |
-|---|---|
-| P0 Scaffold | ✅ |
-| P1 Core logic | ✅ parser, freshness, ranking, share text, input whitelist, agent goal |
-| P2 UI on mock | ✅ |
-| P3 TinyFish layer | ✅ live on 31 Oct 2026: real searches (Bangalore Urban O− → 3 banks, 10 steps; Mysore O+ → none, 8 steps), Datasets (250 banks, all 31 districts), Research (Bombay guide, 35 sources). |
-| P4 UI redesign | ✅ dark hero, browser-frame agent view, API tags, features section, mobile layout |
-| P5 Demo-proofing | ✅ simulate chips, last-good cache fallback, spend caps, setup script |
-| P6 Go-live | ✅ all 31 Karnataka districts, agent filters the stock table to in-stock rows, overrunning/abandoned runs cancelled, "How it works" API showcase, partners section |
+```bash
+npm install
+cp .env.example .env.local     # add TINYFISH_API_KEY; BLOODLINK_MODE=mock costs nothing
+npm run dev -- -p 3010
+npm test                       # web + shared tests (bot: cd bot && npm test)
+npm run lint && npm run typecheck
+npm run setup -- check         # one free Search call proves the key works
+```
+
+`BLOODLINK_MODE=mock` serves sample data shaped from a real snapshot, clearly labelled "Demo data", with simulate chips (nothing in stock, site error, slow site). Production runs `live`.
+
+## Deploy (Railway)
+
+One service runs the website and the bot (`railway.json`, `scripts/start-all.mjs`), with a volume at `/app/.data` for the cache, spend ledger and bot alerts. Railway deploys **`main`** from the fork `siddarth-ba-72/bloodlink-tinyfish`. Ship by merging into `main` (`SYNC.md`, section 0).
+
+Required variables: `TINYFISH_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `BLOODLINK_MODE=live`, `WEB_APP_URL`. Optional ones are in `.env.example`.
 
 ## Known limits
 
-- A live search takes 2–4 minutes when eRaktKosh is slow (~25 s per agent step). The server stops a run after 7 minutes.
-- "Keep looking" re-runs from the open tab (webhooks need public https; localhost can't receive them).
-- Karnataka only (all 31 districts). Mock pairings of bank ↔ units are not real (clearly labelled "Demo data").
-
-In demo mode the form shows **simulate** chips (Normal / Nothing in stock / Site error / Slow site). "Nothing in stock" empties only the first search, so Widen then finds stock nearby. "Keep looking" makes stock appear on the 2nd check (every 30 s).
+- The fast path relies on eRaktKosh not checking its anti-scraping token on the stock request (true on 31 Oct 2026). If that changes, searches fall back to the AI agent automatically.
+- Stock is what banks report on eRaktKosh; some timestamps are months old and are flagged as stale. Always call before travelling.
+- "Keep looking" on the web re-runs from the open tab; the bot's alerts run on the server every 30 minutes.
+- `npm audit` flags `postcss` inside Next.js's build tooling (build-time only, processes our own CSS). The fix needs Next 16; accepted for now.

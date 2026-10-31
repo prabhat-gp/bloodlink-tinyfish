@@ -76,7 +76,7 @@ export function AgentPanel({ state, progress, streamingUrl, mock }: Props) {
               </span>
               <p className="max-w-xs px-4 text-sm text-white/80">
                 {state === "idle"
-                  ? "A TinyFish agent will open eRaktKosh and fill in the form for you."
+                  ? "A TinyFish browser reads eRaktKosh live for you, in about two seconds."
                   : running
                     ? last ?? "Starting agent…"
                     : "Run complete. Results below."}

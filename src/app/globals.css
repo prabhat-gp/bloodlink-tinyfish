@@ -26,9 +26,8 @@
   --color-zinc-700: #46382f;
   --color-zinc-800: #34261f;
   --color-zinc-900: #2a1a14;
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --animate-scan: scan 2.4s ease-in-out infinite;
   --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-ping-slow: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
@@ -101,10 +100,13 @@ body {
   font-family: var(--font-sans);
 }
 
-h1, h2, h3, .serif {
-  font-family: var(--font-serif);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+h1, h2, h3 {
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
 }
 
 ::selection {
@@ -172,12 +174,8 @@ button:not(:disabled):active, a:active {
   --color-zinc-700: #d8cabe;
   --color-zinc-800: #e9ddd2;
   --color-zinc-900: #f6ece3;
-  --color-blood-50: #2c1512;
-  --color-blood-100: #3d1915;
-  --color-blood-200: #5a221c;
-  --color-blood-600: #d2463a;
-  --color-blood-700: #e2685c;
-  --color-blood-800: #ef9488;
+  --color-blood-600: #c9372b;
+  --color-blood-700: #b3261e;
 }
 :root.dark .hero-bg {
   background:

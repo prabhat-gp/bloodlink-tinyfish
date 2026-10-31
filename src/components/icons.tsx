@@ -15,11 +15,6 @@ const base = (p: P) => ({
   ...p,
 });
 
-export const Drop = (p: P) => (
-  <svg {...base(p)}>
-    <path d="M12 2.7s6.5 7 6.5 11.8a6.5 6.5 0 0 1-13 0C5.5 9.7 12 2.7 12 2.7Z" />
-  </svg>
-);
 export const DropSolid = (p: P) => (
   <svg {...base({ ...p, fill: "currentColor", stroke: "none" })}>
     <path d="M12 2.2c.3 0 .6.1.8.4C13.9 3.8 19.5 10 19.5 14.6a7.5 7.5 0 0 1-15 0C4.5 10 10.1 3.8 11.2 2.6c.2-.3.5-.4.8-.4Z" />
@@ -71,12 +66,6 @@ export const Alert = (p: P) => (
   <svg {...base(p)}>
     <path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3Z" />
     <path d="M12 9v4M12 17h.01" />
-  </svg>
-);
-export const Clock = (p: P) => (
-  <svg {...base(p)}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 6v6l4 2" />
   </svg>
 );
 export const Layers = (p: P) => (

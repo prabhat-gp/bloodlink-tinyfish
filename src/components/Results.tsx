@@ -43,7 +43,7 @@ export function Results({ outcome, group, district, component, onWiden, widening
               </a>
               .
             </p>
-            <button onClick={onRetry} className="mt-4 rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-zinc-800">
+            <button onClick={onRetry} className="mt-4 rounded-lg bg-blood-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blood-700">
               Try again
             </button>
           </div>

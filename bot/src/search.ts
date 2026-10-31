@@ -95,7 +95,6 @@ function release() {
   if (next) next();
   else running--;
 }
-export const queueStats = () => ({ running, waiting: waiting.length, max: MAX_RUNS });
 
 // ---------- search ----------
 

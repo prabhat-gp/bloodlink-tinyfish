@@ -6,8 +6,6 @@ import type { RawBank } from "../types";
  * units is NOT real (shuffled for the demo). Phones are only included where the site published
  * them for that bank. Never present mock results as live stock.
  */
-export const SNAPSHOT_NOTE = "Mock data shaped from a 31 Oct 2026 eRaktKosh snapshot. Not live stock.";
-
 export const BANGALORE_URBAN_WHOLE_BLOOD: RawBank[] = [
   {
     bank_name: "Fortis Hospital Pvt. Ltd.",

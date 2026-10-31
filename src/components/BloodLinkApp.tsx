@@ -162,7 +162,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
               <span className="grid h-8 w-8 place-items-center rounded-lg bg-blood-600 shadow-[0_8px_20px_-6px_rgb(179_38_30/0.6)]">
                 <DropSolid className="h-4 w-4 text-white" />
               </span>
-              <span className="serif text-[22px] tracking-tight">Blood<i className="text-blood-600">Link</i></span>
+              <span className="text-lg font-semibold tracking-tight">Blood<span className="text-blood-600">Link</span></span>
             </div>
             <div className="flex items-center gap-2 text-xs">
               <a href="#how" className="hidden rounded-full px-3 py-1.5 font-medium text-zinc-500 transition hover:bg-ink/5 hover:text-zinc-900 sm:inline">
@@ -201,7 +201,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
               </p>
               <h1 className="mt-6 text-[2.6rem] leading-[1.02] tracking-[-0.03em] sm:text-6xl lg:text-[4.2rem]">
                 Someone needs blood.{" "}
-                <i className="font-normal text-blood-600">Let&apos;s find it.</i>
+                <span className="text-blood-600">Let&apos;s find it.</span>
               </h1>
               <p className="mt-6 max-w-lg text-base leading-relaxed text-zinc-500 sm:text-lg">
                 We read the government&apos;s live blood stock for you in about two seconds and hand back a short list
@@ -225,7 +225,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
               <dl className="grid max-w-xl grid-cols-2 gap-x-8 gap-y-5 border-y border-zinc-200 py-6 sm:grid-cols-4">
                 {STATS.map(([n, label]) => (
                   <div key={label}>
-                    <dt className="serif text-3xl tabular-nums">{n}</dt>
+                    <dt className="text-3xl font-semibold tracking-tight tabular-nums">{n}</dt>
                     <dd className="mt-1 text-xs leading-snug text-zinc-500">{label}</dd>
                   </div>
                 ))}

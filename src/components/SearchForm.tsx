@@ -104,7 +104,7 @@ export function SearchForm({ query, onChange, onSubmit, busy, blocked, mock, sim
       <button
         type="submit"
         disabled={busy || blocked}
-        className="group mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-ink text-base font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
+        className="group mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-blood-600 text-base font-semibold text-white transition hover:bg-blood-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {busy ? (
           <>
@@ -130,7 +130,7 @@ export function SearchForm({ query, onChange, onSubmit, busy, blocked, mock, sim
               aria-pressed={simulate === v}
               onClick={() => onSimulate(v)}
               className={`rounded-full px-2.5 py-1 font-medium transition ${
-                simulate === v ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                simulate === v ? "bg-ink text-white" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
               }`}
             >
               {label}
