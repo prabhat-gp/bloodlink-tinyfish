@@ -132,6 +132,15 @@ export async function runAsync(body: AgentRequest): Promise<string> {
 
 export const getRun = (id: string) => call<RunInfo>(`${AGENT}/v1/runs/${encodeURIComponent(id)}`, { timeoutMs: 15_000 });
 
+/** Stop a run that is no longer wanted (user left, or it overran) so it stops spending steps. Best effort. */
+export async function cancelRun(id: string) {
+  try {
+    await call(`${AGENT}/v1/runs/${encodeURIComponent(id)}/cancel`, { method: "POST", timeoutMs: 10_000 });
+  } catch {
+    /* already finished, or TinyFish unreachable: nothing more we can do */
+  }
+}
+
 export const TERMINAL = new Set(["COMPLETED", "FAILED", "CANCELLED"]);
 
 // ---------- Search & Fetch (free) ----------

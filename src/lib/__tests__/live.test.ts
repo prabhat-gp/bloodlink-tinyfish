@@ -10,9 +10,11 @@ vi.mock("../server/store", () => ({
 
 let script: Record<string, unknown>[] = [];
 let throwAfter: number | null = null;
+const cancelled: string[] = [];
 vi.mock("../server/tinyfish", () => ({
   TinyFishError: class extends Error {},
   getRun: async () => ({ status: "COMPLETED", num_of_steps: 21 }),
+  cancelRun: async (id: string) => void cancelled.push(id),
   async *runSse() {
     for (const [i, ev] of script.entries()) {
       if (throwAfter !== null && i >= throwAfter) throw new Error("socket closed");
@@ -71,6 +73,8 @@ describe("liveAgentRun", () => {
     const c = complete(await collect());
     expect(c.status).toBe("FAILED");
     expect(c.error?.message).toBeTruthy();
+    // The orphaned run is cancelled so it stops spending.
+    expect(cancelled).toContain("r3");
   });
 
   it("refuses to start when the daily cap is used up", async () => {

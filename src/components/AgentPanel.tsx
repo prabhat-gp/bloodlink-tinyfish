@@ -20,6 +20,8 @@ export function AgentPanel({ state, progress, streamingUrl, mock }: Props) {
 
   const running = state === "running";
   const last = progress.at(-1)?.text;
+  // The stream only shows "session completed" once the run ends, so drop it and collapse.
+  const showStream = !!streamingUrl && running;
 
   return (
     <section className="overflow-hidden rounded-[1.25rem] bg-ink text-white shadow-[0_20px_50px_-20px_rgb(12_12_16/0.5)]" aria-live="polite">
@@ -48,9 +50,9 @@ export function AgentPanel({ state, progress, streamingUrl, mock }: Props) {
         </span>
       </div>
 
-      <div className={`relative w-full bg-[#15151c] transition-[aspect-ratio] duration-500 ${state === "done" && !streamingUrl ? "aspect-[16/4]" : "aspect-[16/9]"}`}>
-        {streamingUrl ? (
-          <iframe src={streamingUrl} title="TinyFish agent live browser" className="absolute inset-0 h-full w-full bg-white" sandbox="allow-scripts allow-same-origin" />
+      <div className={`relative w-full bg-[#15151c] transition-[aspect-ratio] duration-500 ${state === "done" ? "aspect-[16/4]" : "aspect-[16/9]"}`}>
+        {showStream ? (
+          <iframe src={streamingUrl!} title="TinyFish agent live browser" className="absolute inset-0 h-full w-full bg-white" sandbox="allow-scripts allow-same-origin" />
         ) : (
           <div className="absolute inset-0 overflow-hidden">
             {/* Wireframe of the eRaktKosh form being filled in */}

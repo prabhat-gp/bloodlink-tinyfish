@@ -6,6 +6,7 @@ import { expandTargets } from "@/lib/expand";
 import { estimateCost } from "@/lib/parse";
 import type { ExpandResult, ExpandTarget, SearchQuery } from "@/lib/types";
 import { useAgentSearch } from "@/lib/useAgentSearch";
+import { parseQuery } from "@/lib/validate";
 import { ActionsPanel } from "./ActionsPanel";
 import { AgentPanel } from "./AgentPanel";
 import { Features } from "./Features";
@@ -13,6 +14,7 @@ import { Alert, DropSolid, Fish } from "./icons";
 import { Results } from "./Results";
 import { SearchForm } from "./SearchForm";
 import { SidePanel } from "./SidePanel";
+import { Sponsors } from "./Sponsors";
 import { WidenPanel } from "./WidenPanel";
 
 const WATCH_MS_MOCK = 30_000;
@@ -24,9 +26,9 @@ const EST_WIDEN_STEPS = 7 * 20;
 
 /** Observed on eRaktKosh, Bangalore Urban, 31 Oct 2026. */
 const STATS = [
-  ["94", "blood banks listed in Bengaluru"],
+  ["95", "blood banks listed in Bengaluru"],
   ["10", "had whole blood in stock"],
-  ["4", "had O− whole blood"],
+  ["3", "had O− whole blood"],
   ["8 mo", "since the oldest stock update"],
 ] as const;
 
@@ -52,6 +54,14 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
   const stepsRef = useRef(0);
   const resultsRef = useRef<HTMLDivElement>(null);
   stepsRef.current = stepsUsed;
+
+  // Links from the Telegram bot open /?group=O-&component=11&district=572: pre-fill, never auto-run (costs credits).
+  useEffect(() => {
+    const p = Object.fromEntries(new URLSearchParams(window.location.search));
+    if (!p.group) return;
+    const parsed = parseQuery({ state: "29", component: "11", district: "572", ...p });
+    if (parsed.ok) setQuery(parsed.query);
+  }, []);
 
   const overCap = stepsUsed + EST_SEARCH_STEPS > stepCap;
   const widening = widenPending !== null;
@@ -140,7 +150,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
   const pct = Math.min(100, (stepsUsed / stepCap) * 100);
 
   return (
-    <div className="min-h-screen">
+    <div id="top" className="min-h-screen">
       {/* ---------- Hero ---------- */}
       <div className="hero-bg relative overflow-hidden text-white">
         <div className="hero-grid pointer-events-none absolute inset-0" />
@@ -153,6 +163,12 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
               <span className="text-lg font-semibold tracking-tight">BloodLink</span>
             </div>
             <div className="flex items-center gap-2 text-xs">
+              <a href="#how" className="hidden rounded-full px-3 py-1.5 font-medium text-white/60 transition hover:bg-white/10 hover:text-white sm:inline">
+                How it works
+              </a>
+              <a href="#sponsors" className="hidden rounded-full px-3 py-1.5 font-medium text-white/60 transition hover:bg-white/10 hover:text-white sm:inline">
+                Partners
+              </a>
               {mock && (
                 <span className="rounded-full bg-amber-400/15 px-2.5 py-1 font-semibold text-amber-300 ring-1 ring-amber-400/30 ring-inset">
                   Demo data
@@ -265,6 +281,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
                   <ActionsPanel
                     group={submitted.group}
                     component={submitted.component}
+                    district={submitted.district}
                     banks={[...outcome.banks, ...(widen ?? []).flatMap((r) => r.banks)].sort((a, b) => b.score - a.score)}
                     watching={watching}
                     onToggleWatch={() => {
@@ -279,13 +296,15 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
             )}
           </main>
 
-          <SidePanel group={submitted?.group ?? query.group} mock={mock} />
+          <SidePanel group={submitted?.group ?? query.group} district={districtName(submitted?.district ?? query.district)} mock={mock} />
         </div>
       </div>
 
       <div className="border-t border-zinc-200/70">
         <Features />
       </div>
+
+      <Sponsors />
 
       <footer className="border-t border-zinc-200/70">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-xs leading-relaxed text-zinc-500 sm:px-6 md:flex-row md:justify-between">

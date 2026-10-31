@@ -23,7 +23,22 @@ interface Props {
   onSimulate: (s: string) => void;
 }
 
-function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: Record<string, string> }) {
+function Select({
+  label,
+  value,
+  onChange,
+  options,
+  sort,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: Record<string, string>;
+  /** Codes are numeric, so object order is code order; sort by name for long lists. */
+  sort?: boolean;
+}) {
+  const entries = Object.entries(options);
+  if (sort) entries.sort((a, b) => a[1].localeCompare(b[1]));
   return (
     <label className="block">
       <span className="mb-1.5 block text-xs font-medium tracking-wide text-zinc-500 uppercase">{label}</span>
@@ -33,7 +48,7 @@ function Select({ label, value, onChange, options }: { label: string; value: str
           value={value}
           onChange={(e) => onChange(e.target.value)}
         >
-          {Object.entries(options).map(([code, name]) => (
+          {entries.map(([code, name]) => (
             <option key={code} value={code}>
               {name}
             </option>
@@ -83,7 +98,7 @@ export function SearchForm({ query, onChange, onSubmit, busy, blocked, mock, sim
 
       <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Select label="Component" value={query.component} onChange={(component) => onChange({ ...query, component })} options={COMPONENTS} />
-        <Select label="District · Karnataka" value={query.district} onChange={(district) => onChange({ ...query, district })} options={DISTRICTS} />
+        <Select label="District · Karnataka" value={query.district} onChange={(district) => onChange({ ...query, district })} options={DISTRICTS} sort />
       </div>
 
       <button

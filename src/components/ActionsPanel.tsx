@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { shareMessage, whatsappUrl } from "@/lib/share";
+import { shareMessage, telegramUrl, whatsappUrl } from "@/lib/share";
 import type { Bank, BloodGroup } from "@/lib/types";
 import { Bell, Check, Copy, Share } from "./icons";
 
 interface Props {
   group: BloodGroup;
   component: string;
+  district: string;
   banks: Bank[];
   watching: boolean;
   onToggleWatch: () => void;
@@ -15,7 +16,7 @@ interface Props {
   mock: boolean;
 }
 
-export function ActionsPanel({ group, component, banks, watching, onToggleWatch, watchNote, mock }: Props) {
+export function ActionsPanel({ group, component, district, banks, watching, onToggleWatch, watchNote, mock }: Props) {
   const [copied, setCopied] = useState(false);
   const text = shareMessage(group, component, banks);
   const found = watchNote?.startsWith("🔔");
@@ -92,6 +93,14 @@ export function ActionsPanel({ group, component, banks, watching, onToggleWatch,
           <Bell className="h-4 w-4" />
           {watching ? "Stop looking" : "Start watching"}
         </button>
+        <a
+          href={telegramUrl({ group, component, district }, true)}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-2 inline-flex items-center gap-1.5 self-start text-[13px] font-semibold text-[#229ED9] transition hover:translate-x-0.5"
+        >
+          Or get the alert on Telegram, even with this tab closed →
+        </a>
       </div>
     </section>
   );

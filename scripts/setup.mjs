@@ -3,7 +3,7 @@
  * One-off TinyFish setup for event day. Each command is explicit because some cost credits.
  *
  *   npm run setup -- check      free   Search call: proves the key works
- *   npm run setup -- dataset    free   Datasets (beta, 3 runs/24h): Bengaluru blood bank directory
+ *   npm run setup -- dataset    free   Datasets (beta, 3 runs/24h): Karnataka blood bank directory
  *   npm run setup -- research   free×2/day then $2   Deep research: Bombay blood group guide
  *   npm run setup -- status     free   show what's in .data/
  *
@@ -34,6 +34,26 @@ async function api(url, init = {}) {
   return JSON.parse(text);
 }
 
+/** Markdown memo → card content: first real paragraph, first numbered actions, cited URLs. */
+function digestResearch(deep) {
+  const text = String(deep.result ?? "");
+  const clean = (l) => l.replace(/\*\*/g, "").replace(/\s*(\[\d+\])+/g, "").trim();
+  const paras = text.split(/\n\s*\n/).map((p) => p.trim());
+  const summary = clean(paras.find((p) => !/^(#|\*\*[^*]+:\*\*|---|\d+\.|[-*] )/.test(p) && p.length > 80) ?? "").slice(0, 600);
+  const steps = text
+    .split("\n")
+    .filter((l) => /^\s*\d+\.\s+/.test(l))
+    .map((l) => clean(l.replace(/^\s*\d+\.\s+/, "")))
+    .filter((l) => l.length > 20)
+    .slice(0, 6);
+  const citations = (deep.citations ?? [])
+    .map((c) => (typeof c === "string" ? { url: c } : { url: c.url, title: c.title }))
+    .filter((c) => /^https?:/.test(c.url ?? ""))
+    .slice(0, 8)
+    .map((c) => ({ title: c.title ?? new URL(c.url).hostname.replace(/^www\./, ""), url: c.url }));
+  return { summary, steps, full: text, citations, at: new Date().toISOString() };
+}
+
 const commands = {
   async check() {
     const p = new URLSearchParams({ query: "eRaktKosh blood stock availability", location: "IN", language: "en" });
@@ -49,9 +69,10 @@ const commands = {
         method: "POST",
         body: JSON.stringify({
           prompt:
-            "Licensed blood banks / blood centres in Bengaluru (Bangalore Urban), Karnataka, India. " +
-            "Columns: name, area (locality), phone (public contact number), category (Govt/Private/Charitable), website.",
-          target_rows: 60,
+            "Licensed blood banks / blood centres in every district of Karnataka, India (all 31 districts, " +
+            "including Bengaluru Urban). Columns: name, district, area (locality / town), phone (public contact number), " +
+            "category (Govt/Private/Charitable), website.",
+          target_rows: 250,
         }),
       });
       id = r.id ?? r.dataset?.id;
@@ -63,7 +84,7 @@ const commands = {
       console.log(`  status: ${d.status}`);
       if (d.status === "ready") {
         const rows = await api(`${AGENT}/v1/datasets/${id}/rows?limit=5`);
-        console.log(`✓ ready. Columns: ${rows.columns?.join(", ")}`);
+        console.log(`✓ ready. Columns: ${(rows.columns ?? []).map((c) => c.name ?? c).join(", ")}`);
         return;
       }
       if (["failed", "cancelled"].includes(d.status)) throw new Error(`dataset ${d.status}`);
@@ -93,15 +114,8 @@ const commands = {
       const r = await api(`${AGENT}/v1/research-run/${id}`);
       console.log(`  status: ${r.status}`);
       if (r.status === "COMPLETED") {
-        const text = String(r.deep_result?.result ?? "");
-        const steps = text
-          .split("\n")
-          .map((l) => l.replace(/^\s*(?:[-*]|\d+[.)])\s+/, "").trim())
-          .filter((l, idx, all) => l && l.length < 220 && all[idx] !== text.split("\n")[idx].trim())
-          .slice(0, 6);
-        const citations = (r.deep_result?.citations ?? []).slice(0, 8).map((c) => ({ title: c.title ?? c.url, url: c.url }));
-        await save("research.json", { summary: text.split("\n\n")[0].slice(0, 600), steps, full: text, citations, at: new Date().toISOString() });
-        console.log(`✓ research cached with ${citations.length} citations`);
+        await save("research.json", digestResearch(r.deep_result ?? {}));
+        console.log("✓ research cached");
         return;
       }
       if (["FAILED", "CANCELLED", "TIMED_OUT"].includes(r.status)) throw new Error(`research ${r.status}`);

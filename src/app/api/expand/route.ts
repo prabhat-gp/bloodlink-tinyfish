@@ -4,7 +4,7 @@ import { MODE } from "@/lib/mode";
 import { rankBanks } from "@/lib/parse";
 import { agentRequest, errorText, normaliseResult, saveGood } from "@/lib/server/agent";
 import { canSpend, recordSpend } from "@/lib/server/budget";
-import { getRun, runAsync, TERMINAL, TinyFishError } from "@/lib/server/tinyfish";
+import { cancelRun, getRun, runAsync, TERMINAL, TinyFishError } from "@/lib/server/tinyfish";
 import type { ExpandResult, ExpandTarget, SearchQuery } from "@/lib/types";
 import { parseQuery } from "@/lib/validate";
 
@@ -81,6 +81,11 @@ async function live(q: SearchQuery, targets: ExpandTarget[], signal: AbortSignal
       }),
     );
   }
+
+  // Anything still running (deadline hit or user left) is cancelled and charged at the estimate.
+  const leftover = started.filter((s, i) => s.id && !results.has(i));
+  await Promise.all(leftover.map((s) => cancelRun(s.id!)));
+  if (leftover.length) await recordSpend(leftover.length * EST_STEPS_PER_TARGET);
 
   const out = started.map(
     (s, i) => results.get(i) ?? { ...s.t, status: "failed" as const, banks: [], steps: 0, reason: "Still running after 4 minutes" },
