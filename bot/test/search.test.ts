@@ -29,7 +29,7 @@ function fake(opts: { ms?: number; fail?: boolean; throws?: boolean } = {}) {
           ? { status: "failure", reason: "Results table did not load", banks: [] }
           : { status: "success", banks: [{ bank_name: "Bank A", availability_text: "Available, O-Ve:1" }] },
         steps: 12,
-        source: "mock",
+        source: "live",
         timestamp: ts(),
       };
     } finally {

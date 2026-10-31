@@ -5,7 +5,6 @@
  */
 import { type Api, Composer, type Context } from "grammy";
 import { ALTERNATE_COMPONENTS, COMPONENTS, districtName, DISTRICTS } from "../../src/lib/eraktkosh";
-import { MODE } from "../../src/lib/mode";
 import { BLOOD_GROUPS, type BloodGroup, type SearchQuery } from "../../src/lib/types";
 import { type Place, placeNear } from "./areas";
 import { addAlert, checkAlerts, listAlerts, removeAlert } from "./alerts";
@@ -17,7 +16,6 @@ import {
   peek,
   searchBloodStock,
   searchNearby,
-  type Simulate,
   type StockResult,
   type Watcher,
 } from "./search";
@@ -332,14 +330,13 @@ handlers.command("cancel", (ctx) => {
   return ctx.reply("OK, cancelled.", { reply_markup: { remove_keyboard: true } });
 });
 
-/** Hidden: run this chat's alert checks now. In mock mode new stock "appears" so the alert can be demoed. */
+/** Hidden: run this chat's alert checks now (a real eRaktKosh check, uses credits). */
 handlers.command("checknow", async (ctx) => {
   const chatId = ctx.chat.id;
   if (!listAlerts(chatId).length) return say(ctx, { text: "You have no alerts yet. Search for blood, then tap <b>🔔 Alert me</b>." });
   await ctx.reply("🔄 Checking your alerts now…");
-  const simulate: Simulate | undefined = MODE === "mock" ? "appear" : undefined;
   detach(
-    checkAlerts(ctx.api, { chatId, simulate }).then((n) => (n ? undefined : ctx.reply("Checked: nothing new yet. I'll keep watching."))),
+    checkAlerts(ctx.api, { chatId, now: true }).then((n) => (n ? undefined : ctx.reply("Checked: nothing new yet. I'll keep watching."))),
   );
 });
 

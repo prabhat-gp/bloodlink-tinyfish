@@ -1,7 +1,6 @@
 /** Every message the bot sends: text (Telegram HTML) + buttons. No logic about what to ask next. */
 import { InlineKeyboard, Keyboard } from "grammy";
 import { ALTERNATE_COMPONENTS, COMPONENTS, districtName, NEIGHBOURS, STOCK_URL } from "../../src/lib/eraktkosh";
-import { MODE } from "../../src/lib/mode";
 import { rankBanks } from "../../src/lib/parse";
 import { mapsUrl, shareMessage, whatsappUrl } from "../../src/lib/share";
 import type { Bank, BloodGroup, SearchQuery } from "../../src/lib/types";
@@ -68,7 +67,6 @@ const unitText = (n: number | null) => (n === null ? "in stock (count not shown)
 const plural = (n: number, one: string, many: string) => (n === 1 ? one : many);
 
 export const FOOTER = "⚠️ Stock is what blood banks report on eRaktKosh. <b>Call before you travel.</b> Emergency: <b>108</b>";
-const DEMO = "🧪 <i>Demo data (mock mode), not live stock.</i>";
 
 // ---------- callback data + deep links ----------
 
@@ -201,7 +199,6 @@ export function resultMessage(r: StockResult, spot: Spot | undefined, opts: { al
       lines.push("");
     }
   }
-  if (r.source === "mock") lines.push(DEMO);
   lines.push(FOOTER);
   return { text: lines.join("\n"), keyboard: resultKeyboard(q, withStock.length > 0, !opts.all && withStock.length > 5) };
 }
@@ -257,7 +254,6 @@ export function nearestMessage(r: StockResult, spot: Spot, donate = false): Msg 
   if (!placed.length) lines.push("No blood banks found for this district on eRaktKosh.", "");
   if (!spot.precise) lines.push("📍 Send your location or type your area to sort these by distance.", "");
   lines.push(`<i>Stock checked ${agoIso(r.checkedAt)}.</i>`);
-  if (r.source === "mock") lines.push(DEMO);
   lines.push(FOOTER);
   return { text: lines.join("\n"), keyboard: new InlineKeyboard().text("🩸 Find a blood group here", `fg:${q.district}`) };
 }
@@ -276,7 +272,6 @@ export function nearbyMessage(q: SearchQuery, results: StockResult[], spot?: Spo
     lines.push(`None of the nearby districts (${esc(names)}) report it right now.`, "");
   }
   if (failed) lines.push(`<i>${failed} ${plural(failed, "district", "districts")} couldn't be checked.</i>`);
-  if (results.some((r) => r.source === "mock")) lines.push(DEMO);
   lines.push(FOOTER);
   return { text: lines.join("\n"), keyboard: new InlineKeyboard().text("🔔 Alert me when it's available", `a:${qk(q)}`) };
 }
@@ -295,10 +290,7 @@ export function statusText(q: SearchQuery, spot: Spot | undefined, s: { seconds:
     ? `🔎 Getting blood banks ${whereText(q, spot)} from eRaktKosh`
     : `🔎 Checking eRaktKosh for <b>${groupLabel(q.group)}</b> · ${componentLabel(q.component)} · ${whereText(q, spot)}`;
   const wait = s.queued ? `⏳ Waiting for a free agent (${s.queued} ahead)…` : `⏳ ${s.seconds}s · ${esc(s.progress)}`;
-  const hint =
-    MODE === "live"
-      ? "An AI agent is filling in the government form for you. Usually 30–60 s."
-      : "🧪 Demo run (mock mode), about 7 s.";
+  const hint = "An AI agent is filling in the government form for you. Usually 30–60 s.";
   return [what, wait, `<i>${hint}</i>`].join("\n");
 }
 export const watchKeyboard = (url: string) => new InlineKeyboard().url("👀 Watch the agent live", url);
@@ -441,7 +433,6 @@ export function alertConfirm(a: Alert): Msg {
     `I'll check eRaktKosh every ${config.alertIntervalMinutes} min for the next ${config.alertTtlHours} h and message you as soon as a <b>new</b> blood bank reports it.`,
     "Manage with /alerts.",
   ];
-  if (MODE === "mock") lines.push("", "🧪 <i>Demo: send /checknow to simulate new stock arriving.</i>");
   return { text: lines.join("\n"), keyboard: new InlineKeyboard().text("🔕 Stop this alert", `x:${a.id}`) };
 }
 
@@ -460,7 +451,6 @@ export function alertMessage(a: Alert, fresh: Bank[], r: StockResult): Msg {
   const placed = orderForNeed(placeBanks(fresh, a.spot));
   const lines = [`🔔 <b>Good news: ${groupLabel(a.group)} ${componentLabel(a.component)} is now reported</b> · ${whereText(a, a.spot)}`, ""];
   placed.slice(0, 3).forEach((p, i) => lines.push(bankBlock(p, a.group, i + 1), ""));
-  if (r.source === "mock") lines.push(DEMO);
   lines.push(FOOTER);
   return {
     text: lines.join("\n"),

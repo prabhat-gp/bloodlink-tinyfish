@@ -3,19 +3,15 @@
  *  - 15-min cache: the same search again is instant and free
  *  - joins identical searches already running (5 people asking = 1 agent run)
  *  - at most 2 agent runs at once (TinyFish account limit); the rest wait in line
- * It runs the web app's own agent code (live TinyFish or mock), unchanged.
+ * Always live: it runs the web app's own TinyFish agent call on eRaktKosh, unchanged.
  */
 import { NEIGHBOURS } from "../../src/lib/eraktkosh";
-import { mockAgentRun, type Simulate } from "../../src/lib/mock/engine";
-import { MODE } from "../../src/lib/mode";
 import { lastGood } from "../../src/lib/server/agent";
 import { liveAgentRun } from "../../src/lib/server/liveSearch";
 import { readJson, writeJson } from "../../src/lib/server/store";
 import type { AgentEvent, RawBank, SearchQuery } from "../../src/lib/types";
 import { config } from "./config";
 import { isPersisting } from "./store";
-
-export type { Simulate };
 
 export interface StockResult {
   query: SearchQuery;
@@ -24,7 +20,7 @@ export interface StockResult {
   /** When eRaktKosh was read (ISO). */
   checkedAt: string;
   /** "cache" = the live run failed and this is the last good result. */
-  source: "live" | "mock" | "cache";
+  source: "live" | "cache";
   /** Served from the bot's cache, no new agent run. */
   cached: boolean;
   reason?: string;
@@ -40,9 +36,9 @@ export interface Watcher {
   onStreamingUrl?(url: string): void;
 }
 
-export type Runner = (q: SearchQuery, signal: AbortSignal, simulate: Simulate) => AsyncGenerator<AgentEvent>;
+export type Runner = (q: SearchQuery, signal: AbortSignal) => AsyncGenerator<AgentEvent>;
 
-const defaultRunner: Runner = (q, signal, simulate) => (MODE === "live" ? liveAgentRun(q, signal) : mockAgentRun(q, simulate));
+const defaultRunner: Runner = (q, signal) => liveAgentRun(q, signal);
 let runner: Runner = defaultRunner;
 /** Tests swap in a fast fake. */
 export const setRunner = (r?: Runner) => {
@@ -59,7 +55,11 @@ const CACHE_FILE = "bot-cache.json";
 let cache: Record<string, StockResult> | null = null;
 
 async function loadCache() {
-  if (!cache) cache = isPersisting() ? await readJson<Record<string, StockResult>>(CACHE_FILE, {}) : {};
+  if (!cache) {
+    const saved = isPersisting() ? await readJson<Record<string, StockResult>>(CACHE_FILE, {}) : {};
+    // Only real eRaktKosh results (older demo runs were saved with source "mock").
+    cache = Object.fromEntries(Object.entries(saved).filter(([, r]) => r.source === "live"));
+  }
   return cache;
 }
 function saveCache() {
@@ -72,7 +72,8 @@ export const clearCache = () => {
 /** A cached result no older than `maxAgeMinutes`, or null. */
 export async function peek(q: SearchQuery, maxAgeMinutes = config.cacheTtlMinutes): Promise<StockResult | null> {
   const hit = (await loadCache())[keyOf(q)];
-  return hit && ageMinutes(hit) <= maxAgeMinutes ? { ...hit, cached: true } : null;
+  // maxAgeMinutes 0 = always read eRaktKosh again.
+  return hit && maxAgeMinutes > 0 && ageMinutes(hit) <= maxAgeMinutes ? { ...hit, cached: true } : null;
 }
 
 // ---------- queue: at most N agent runs at once ----------
@@ -110,12 +111,10 @@ const inflight = new Map<string, Job>();
 export async function searchBloodStock(
   q: SearchQuery,
   watcher?: Watcher,
-  opts: { maxAgeMinutes?: number; simulate?: Simulate } = {},
+  opts: { maxAgeMinutes?: number } = {},
 ): Promise<StockResult> {
-  if (!opts.simulate || opts.simulate === "none") {
-    const hit = await peek(q, opts.maxAgeMinutes);
-    if (hit) return hit;
-  }
+  const hit = await peek(q, opts.maxAgeMinutes);
+  if (hit) return hit;
   const key = keyOf(q);
   const running = inflight.get(key);
   if (running) {
@@ -128,12 +127,12 @@ export async function searchBloodStock(
     return running.promise;
   }
   const job = { watchers: new Set(watcher ? [watcher] : []), started: false } as Job;
-  job.promise = run(q, job, opts.simulate ?? "none").finally(() => inflight.delete(key));
+  job.promise = run(q, job).finally(() => inflight.delete(key));
   inflight.set(key, job);
   return job.promise;
 }
 
-async function run(q: SearchQuery, job: Job, simulate: Simulate): Promise<StockResult> {
+async function run(q: SearchQuery, job: Job): Promise<StockResult> {
   const each = (f: (w: Watcher) => void) =>
     job.watchers.forEach((w) => {
       try {
@@ -150,7 +149,7 @@ async function run(q: SearchQuery, job: Job, simulate: Simulate): Promise<StockR
 
   let result: StockResult | null = null;
   try {
-    for await (const ev of runner(q, AbortSignal.timeout(300_000), simulate)) {
+    for await (const ev of runner(q, AbortSignal.timeout(300_000))) {
       if (ev.type === "STREAMING_URL" && ev.streaming_url) {
         job.streamingUrl = ev.streaming_url;
         each((w) => w.onStreamingUrl?.(ev.streaming_url!));
@@ -178,7 +177,7 @@ async function run(q: SearchQuery, job: Job, simulate: Simulate): Promise<StockR
 
 function toResult(q: SearchQuery, ev: Extract<AgentEvent, { type: "COMPLETE" }>, t0: number, streamingUrl?: string): StockResult {
   const seconds = Math.round((Date.now() - t0) / 1000);
-  const source = ev.source ?? (MODE === "live" ? "live" : "mock");
+  const source = ev.source === "cache" ? "cache" : "live";
   // COMPLETED only means the browser ran. The goal itself can still have failed.
   if (ev.status !== "COMPLETED" || !ev.result || ev.result.status !== "success") {
     const reason = ev.result?.reason ?? ev.error?.message ?? "The agent could not read eRaktKosh.";
@@ -203,7 +202,7 @@ const failed = (q: SearchQuery, reason: string, t0: number): StockResult => ({
   ok: false,
   raw: [],
   checkedAt: iso(),
-  source: MODE === "live" ? "live" : "mock",
+  source: "live",
   cached: false,
   reason,
   steps: 0,

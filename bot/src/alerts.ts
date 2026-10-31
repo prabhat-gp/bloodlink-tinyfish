@@ -4,7 +4,6 @@
  * that wasn't reported before now has stock.
  */
 import type { Api } from "grammy";
-import type { Simulate } from "../../src/lib/mock/engine";
 import type { SearchQuery } from "../../src/lib/types";
 import { config } from "./config";
 import * as F from "./format";
@@ -49,8 +48,9 @@ async function send(api: Api, chatId: number, m: F.Msg) {
   }
 }
 
-/** Run all due checks now. `simulate: "appear"` (mock mode) makes new stock show up for demos. Returns messages sent. */
-export async function checkAlerts(api: Api, opts: { chatId?: number; simulate?: Simulate } = {}): Promise<number> {
+/** Run all due checks now. Returns messages sent. */
+/** `now: true` (manual /checknow) skips the cache and reads eRaktKosh again. */
+export async function checkAlerts(api: Api, opts: { chatId?: number; now?: boolean } = {}): Promise<number> {
   const now = Date.now();
   const mine = (a: Alert) => opts.chatId === undefined || a.chatId === opts.chatId;
 
@@ -70,7 +70,7 @@ export async function checkAlerts(api: Api, opts: { chatId?: number; simulate?: 
   await Promise.all(
     [...groups.values()].map(async (list) => {
       const q: SearchQuery = { state: "29", group: list[0].group, component: list[0].component, district: list[0].district };
-      const r = await searchBloodStock(q, undefined, { maxAgeMinutes: Math.max(1, config.alertIntervalMinutes / 2), simulate: opts.simulate });
+      const r = await searchBloodStock(q, undefined, { maxAgeMinutes: opts.now ? 0 : Math.max(1, config.alertIntervalMinutes / 2) });
       if (!r.ok || r.source === "cache") return; // never alert from an old fallback result
       const withStock = F.rank(r).filter((b) => b.hasRequested);
       for (const a of list) {

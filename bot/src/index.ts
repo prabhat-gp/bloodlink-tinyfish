@@ -1,6 +1,5 @@
 /** Entry point: starts the Telegram bot (long polling) and the alert loop. */
 import type { Api } from "grammy";
-import { MODE } from "../../src/lib/mode";
 import { hasKey } from "../../src/lib/server/tinyfish";
 import { startAlertLoop } from "./alerts";
 import { createBot } from "./bot";
@@ -36,8 +35,8 @@ async function main() {
     console.error("TELEGRAM_BOT_TOKEN is missing. Copy bot/.env.example to bot/.env.local and add the token from @BotFather.");
     process.exit(1);
   }
-  if (MODE === "live" && !hasKey()) {
-    console.error("BLOODLINK_MODE=live but TINYFISH_API_KEY is missing from .env.local.");
+  if (!hasKey()) {
+    console.error("TINYFISH_API_KEY is missing from ../.env.local. The bot always searches live.");
     process.exit(1);
   }
   await loadStore();
@@ -55,7 +54,7 @@ async function main() {
   await bot.start({
     onStart: (me) =>
       console.log(
-        `BloodLink bot @${me.username} running · ${MODE} mode · cache ${config.cacheTtlMinutes} min · alerts every ${config.alertIntervalMinutes} min`,
+        `BloodLink bot @${me.username} running · live eRaktKosh · cache ${config.cacheTtlMinutes} min · alerts every ${config.alertIntervalMinutes} min`,
       ),
   });
 }

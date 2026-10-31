@@ -15,16 +15,16 @@ setPersistence(false);
 
 // ---------- fake agent ----------
 
-const agent = { runs: 0, empty: new Set<string>() };
+const agent = { runs: 0, empty: new Set<string>(), appear: false };
 const ist = (ms: number) => new Date(ms + 5.5 * 3_600_000).toISOString().replace("T", " ").slice(0, 19);
-const runner: Runner = async function* (q, _signal, simulate): AsyncGenerator<AgentEvent> {
+const runner: Runner = async function* (q): AsyncGenerator<AgentEvent> {
   agent.runs++;
   const t = () => new Date().toISOString();
   yield { type: "STARTED", run_id: "run1", timestamp: t() };
   yield { type: "STREAMING_URL", run_id: "run1", streaming_url: "https://live.example/run1", timestamp: t() };
   yield { type: "PROGRESS", run_id: "run1", purpose: "Selecting District", timestamp: t() };
   let banks: RawBank[] = agent.empty.has(q.district) ? [] : mockRows(q);
-  if (simulate === "appear") {
+  if (agent.appear) {
     banks = [
       {
         bank_name: "New Hope Blood Centre",
@@ -37,7 +37,7 @@ const runner: Runner = async function* (q, _signal, simulate): AsyncGenerator<Ag
       ...banks,
     ];
   }
-  yield { type: "COMPLETE", run_id: "run1", status: "COMPLETED", result: { status: "success", banks }, steps: 18, source: "mock", timestamp: t() };
+  yield { type: "COMPLETE", run_id: "run1", status: "COMPLETED", result: { status: "success", banks }, steps: 18, source: "live", timestamp: t() };
 };
 
 // ---------- fake Telegram ----------
@@ -117,6 +117,7 @@ beforeEach(() => {
   clearCache();
   agent.runs = 0;
   agent.empty.clear();
+  agent.appear = false;
 });
 
 describe("conversation", () => {
@@ -137,7 +138,7 @@ describe("conversation", () => {
     expect(result).toMatch(/~\d+ km/); // distances from HSR
     expect(result).toMatch(/📞 \+91/);
     expect(result).toMatch(/Call before you travel/);
-    expect(result).toMatch(/Demo data/);
+    expect(result).not.toMatch(/Demo|mock/i);
     expect(buttons(last(cs))).toEqual(expect.arrayContaining(["a:O-:11:572", "r:O-:11:572", "sh:O-:11:572"]));
     expect(agent.runs).toBe(1);
   });
@@ -244,6 +245,7 @@ describe("conversation", () => {
     expect(texts(cs)[0]).toMatch(/Alert on/);
     expect(allAlerts()).toHaveLength(1);
 
+    agent.appear = true; // stock shows up on eRaktKosh
     cs = await send(text("/checknow"));
     expectValidHtml(cs);
     const alert = texts(cs).find((t) => t.includes("Good news"))!;

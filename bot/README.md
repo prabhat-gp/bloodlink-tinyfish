@@ -13,7 +13,7 @@ npm run dev                    # long polling, restarts on save
 npm test                       # parser, places, search layer + end-to-end conversations (fake Telegram)
 ```
 
-`TINYFISH_API_KEY` and `BLOODLINK_MODE` (mock / live) come from the web app's `../.env.local`, so both share one key, one spend cap and one `.data/` folder.
+The bot always searches live eRaktKosh. `TINYFISH_API_KEY` comes from the web app's `../.env.local`, so both share one key, one spend cap and one `.data/` folder.
 Only one copy of the bot can run per token. A second copy fails with "already running".
 
 ## What people can do
@@ -28,7 +28,7 @@ Only one copy of the bot can run per token. A second copy fails with "already ru
 | `O- in Chennai` | "Not covered yet" + eRaktKosh link + 108 |
 | Buttons | 🔔 Alert · 🔄 Refresh · 📤 Share (forwardable + WhatsApp) · 📋 Show all · 🔍 Nearby districts · 🧪 Other component (ask doctor) |
 | `/alerts` `/help` `/cancel` | Manage alerts, how it works, reset |
-| `/checknow` (hidden) | Runs this chat's alert check now. In mock mode new stock "appears", for the demo |
+| `/checknow` (hidden) | Runs this chat's alert check now (a real eRaktKosh check, uses credits) |
 
 ## Links between the web app and the bot
 
@@ -58,4 +58,4 @@ bot/
 
 - Bot code lives only in `bot/`. The web app (`src/`) is owned by the other session.
 - The bot **imports** `../src/lib/*` (agent call, parsing, ranking, spend cap) and never edits it.
-- Going live: set `BLOODLINK_MODE=live` in `../.env.local` and restart both the web app and the bot.
+- The bot has no demo mode. Tests use a fake agent, so they never spend credits.
