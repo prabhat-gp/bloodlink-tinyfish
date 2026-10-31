@@ -179,7 +179,7 @@ function CampsCard({ mock }: { mock: boolean }) {
         <button
           onClick={() => monitorAction(monitor ? "run" : "create")}
           disabled={busy}
-          className="shrink-0 rounded-lg bg-blood-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-blood-700 disabled:opacity-60"
+          className="shrink-0 rounded-lg bg-blood-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-blood-500 disabled:opacity-60"
         >
           {busy ? "…" : monitor ? "Run now" : "Turn on"}
         </button>

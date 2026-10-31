@@ -43,7 +43,7 @@ export function Results({ outcome, group, district, component, onWiden, widening
               </a>
               .
             </p>
-            <button onClick={onRetry} className="mt-4 rounded-lg bg-blood-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blood-700">
+            <button onClick={onRetry} className="mt-4 rounded-lg bg-blood-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blood-500">
               Try again
             </button>
           </div>
@@ -90,7 +90,7 @@ export function Results({ outcome, group, district, component, onWiden, widening
             <button
               onClick={onWiden}
               disabled={widening}
-              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-blood-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgb(224_16_60/0.7)] transition hover:bg-blood-700 disabled:opacity-60"
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-blood-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgb(224_16_60/0.7)] transition hover:bg-blood-500 disabled:opacity-60"
             >
               <Layers className="h-4 w-4" />
               {widening ? "7 agents searching in parallel…" : "Widen: nearby districts + other components"}

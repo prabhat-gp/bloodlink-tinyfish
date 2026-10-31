@@ -174,8 +174,14 @@ button:not(:disabled):active, a:active {
   --color-zinc-700: #d8cabe;
   --color-zinc-800: #e9ddd2;
   --color-zinc-900: #f6ece3;
+  /* Reds by job in dark mode: 50–200 are background tints, 600 is the button fill (white text),
+     700–800 are accent text on dark surfaces (WCAG AA). */
+  --color-blood-50: #2c1512;
+  --color-blood-100: #3d1915;
+  --color-blood-200: #5a221c;
   --color-blood-600: #c9372b;
-  --color-blood-700: #b3261e;
+  --color-blood-700: #ec7a6e;
+  --color-blood-800: #f4a196;
 }
 :root.dark .hero-bg {
   background:

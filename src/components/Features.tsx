@@ -350,7 +350,7 @@ function AgentVisual({ p }: { p: number }) {
             <span key={col} className="h-1.5 w-1.5 rounded-full" style={{ background: col }} />
           ))}
           <span className="ml-2 flex-1 truncate font-mono text-[9px] text-white/35">eraktkosh.mohfw.gov.in</span>
-          <span className="flex items-center gap-1 rounded bg-blood-600/25 px-1.5 text-[8.5px] font-bold text-blood-200">
+          <span className="flex items-center gap-1 rounded bg-blood-600/25 px-1.5 text-[8.5px] font-bold text-[#eec3b9]">
             <span className="h-1 w-1 animate-pulse rounded-full bg-blood-400" /> LIVE
           </span>
         </div>
@@ -361,7 +361,7 @@ function AgentVisual({ p }: { p: number }) {
               <span
                 key={f}
                 className={`truncate rounded-md border px-2 py-1 text-[10px] transition duration-300 ${
-                  set ? "scale-100 border-blood-400/50 bg-blood-500/15 text-blood-100" : "scale-95 border-white/10 bg-white/[0.03] text-white/25"
+                  set ? "scale-100 border-blood-400/50 bg-blood-500/15 text-[#f6e1dc]" : "scale-95 border-white/10 bg-white/[0.03] text-white/25"
                 }`}
               >
                 {set ? f : "Select…"}
@@ -545,7 +545,7 @@ function SearchFetchVisual({ p }: { p: number }) {
             <In key={r} show={on(p, 0.27 + i * 0.05)}>
               <div className={`flex items-center justify-between rounded-lg px-3 py-2 text-[11px] transition ${i === 0 && on(p, 0.45) ? "bg-blood-500/15 text-white ring-1 ring-blood-400/40" : "bg-white/[0.04] text-white/55"}`}>
                 <span className="truncate">{r}</span>
-                {i === 0 && on(p, 0.45) && <span className="text-[9px] font-semibold text-blood-200">FETCH →</span>}
+                {i === 0 && on(p, 0.45) && <span className="text-[9px] font-semibold text-[#eec3b9]">FETCH →</span>}
               </div>
             </In>
           ))}

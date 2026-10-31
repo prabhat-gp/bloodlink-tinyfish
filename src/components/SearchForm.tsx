@@ -104,7 +104,7 @@ export function SearchForm({ query, onChange, onSubmit, busy, blocked, mock, sim
       <button
         type="submit"
         disabled={busy || blocked}
-        className="group mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-blood-600 text-base font-semibold text-white transition hover:bg-blood-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="group mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-blood-600 text-base font-semibold text-white transition hover:bg-blood-500 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {busy ? (
           <>

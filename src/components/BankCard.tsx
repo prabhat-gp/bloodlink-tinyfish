@@ -115,7 +115,7 @@ export function BankCard({ bank, group, rank, baseComponent }: { bank: Bank; gro
             <a
               key={p}
               href={`tel:${p}`}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blood-600 px-3 py-1.5 text-sm font-semibold text-white tabular-nums shadow-sm transition hover:bg-blood-700"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-blood-600 px-3 py-1.5 text-sm font-semibold text-white tabular-nums shadow-sm transition hover:bg-blood-500"
             >
               <Phone className="h-3.5 w-3.5" /> {p}
             </a>
