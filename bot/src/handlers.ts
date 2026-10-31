@@ -419,6 +419,10 @@ handlers.on("callback_query:data", async (ctx) => {
       return detach(fromCache(ctx, q, (r) => sendTo(ctx.api, chatId, F.resultMessage(r, spot, { all: true }))));
     case "w":
       return detach(widen(ctx, q, spot));
+    case "cc":
+      return say(ctx, F.componentPicker(q));
+    case "rc":
+      return detach(runSearch(ctx, q, spot));
     case "ag":
       return detach(runSearch(ctx, q, spot, { agent: true }));
     case "alt": {

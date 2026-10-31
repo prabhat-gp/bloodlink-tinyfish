@@ -227,6 +227,14 @@ describe("conversation", () => {
     expect(texts(cs)[0]).toMatch(/a few seconds/);
   });
 
+  it("🧪 Other component: all 8 web-app components, one tap each", async () => {
+    await send(text("O- near HSR"));
+    let cs = await send(tap("cc:O-:11:572"));
+    expect(buttons(last(cs))).toEqual(["rc:O-:11:572", "rc:O-:12:572", "rc:O-:13:572", "rc:O-:14:572", "rc:O-:17:572", "rc:O-:19:572", "rc:O-:23:572", "rc:O-:28:572"]);
+    cs = await send(tap("rc:O-:13:572"));
+    expect(texts(cs).at(-1)).toMatch(/O− · Fresh Frozen Plasma \(FFP\)<\/b> · near HSR Layout/);
+  });
+
   it("👀 Watch the AI agent: always a new run, with the agent flag", async () => {
     await send(text("O- near HSR"));
     expect(buttons(last(await send(text("O- near HSR"))))).toContain("ag:O-:11:572");

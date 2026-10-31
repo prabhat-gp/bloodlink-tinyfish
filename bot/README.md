@@ -27,7 +27,7 @@ Only one copy of the bot can run per token. A second copy fails with "already ru
 | `alert me when O- is available in HSR` | Results + subscribes (checks every 30 min for 48 h, messages only about new banks) |
 | `O- in Mangalore`, `hubli`, a pin anywhere in Karnataka | Searches that district (all 31 covered) |
 | `O- in Chennai` | "Not covered yet" (outside Karnataka) + eRaktKosh link + 108 |
-| Buttons | 🔔 Alert · 🔄 Refresh · 📤 Share (forwardable + WhatsApp) · 📋 Show all · 🔍 Nearby districts · 🧪 Other component (ask doctor) |
+| Buttons | 🧪 Other component (all 8, same as the web app) · 👀 Watch the AI agent · 🔔 Alert · 🔄 Refresh · 📤 Share (forwardable + WhatsApp) · 📋 Show all · 🔍 Nearby districts · 🧪 Other component (ask doctor) |
 | `/alerts` `/help` `/cancel` | Manage alerts, how it works, reset |
 | `/checknow` (hidden) | Runs this chat's alert check now (a real eRaktKosh check, uses credits) |
 

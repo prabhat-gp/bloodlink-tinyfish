@@ -218,9 +218,20 @@ function resultKeyboard(q: SearchQuery, found: boolean, more: boolean) {
     if (alt) kb.text(`🧪 Try ${SHORT[alt]} (ask doctor)`, `alt:${k}`).row();
     kb.text("🔄 Refresh", `r:${k}`);
   }
+  kb.row().text("🧪 Other component", `cc:${k}`);
   const web = webAppLink(q);
   if (web) kb.row().url("🌐 Open in web app", web);
   return kb;
+}
+
+/** All eRaktKosh components (same list and codes as the web app's dropdown). */
+export function componentPicker(q: SearchQuery): Msg {
+  const kb = new InlineKeyboard();
+  Object.keys(COMPONENTS).forEach((c, i) => {
+    kb.text(`${c === q.component ? "✓ " : ""}${componentLabel(c)}`, `rc:${qk({ ...q, component: c })}`);
+    if (i % 2 === 1) kb.row();
+  });
+  return { text: `🧪 Which component for <b>${groupLabel(q.group)}</b>? <i>(The doctor's request slip usually says.)</i>`, keyboard: kb };
 }
 
 export function failedMessage(r: StockResult): Msg {
