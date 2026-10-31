@@ -1,19 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --color-blood-50: #fff1f3;
-  --color-blood-100: #ffe0e5;
-  --color-blood-200: #ffc6d0;
-  --color-blood-300: #ff9aab;
-  --color-blood-400: #ff5c79;
-  --color-blood-500: #f42a50;
-  --color-blood-600: #e0103c;
-  --color-blood-700: #bc0832;
-  --color-blood-800: #9d0a30;
-  --color-blood-900: #860d2f;
-  --color-ink: #0c0c10;
-  --color-canvas: #f6f5f3;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Editorial Warm: deep blood red, warm paper, brown-black ink. */
+  --color-blood-50: #fbf0ed;
+  --color-blood-100: #f6e1dc;
+  --color-blood-200: #eec3b9;
+  --color-blood-300: #e19a8b;
+  --color-blood-400: #d0695a;
+  --color-blood-500: #c03a2c;
+  --color-blood-600: #b3261e;
+  --color-blood-700: #941e18;
+  --color-blood-800: #771a16;
+  --color-blood-900: #5f1714;
+  --color-ink: #2a1a14;
+  --color-canvas: #fbf6ef;
+  --color-paper: #fffdf9;
+  /* Warm the neutral greys used across every component. */
+  --color-zinc-50: #f8f2ea;
+  --color-zinc-100: #f1e8dd;
+  --color-zinc-200: #eadfd2;
+  --color-zinc-300: #dacbbb;
+  --color-zinc-400: #ad9d90;
+  --color-zinc-500: #7a6a60;
+  --color-zinc-600: #5f5048;
+  --color-zinc-700: #46382f;
+  --color-zinc-800: #34261f;
+  --color-zinc-900: #2a1a14;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --animate-scan: scan 2.4s ease-in-out infinite;
   --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -84,29 +98,62 @@
 body {
   background: var(--color-canvas);
   color: var(--color-ink);
-  font-feature-settings: "ss01", "cv11";
+  font-family: var(--font-sans);
 }
 
-/* Hero backdrop: dark, warm glow, faint grid. */
+h1, h2, h3, .serif {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: var(--color-blood-100);
+  color: var(--color-blood-800);
+}
+
+/* Micro-interactions: buttons press, links glide, everything focusable gets a clear ring. */
+button, a, [role="button"] {
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s, color 0.2s, box-shadow 0.25s, border-color 0.2s, opacity 0.2s;
+}
+button:not(:disabled):active, a:active {
+  transform: scale(0.97);
+}
+:focus-visible {
+  outline: 2px solid var(--color-blood-500);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* Hero backdrop: warm paper with a soft blood-red bloom. */
 .hero-bg {
   background:
-    radial-gradient(60rem 30rem at 85% -10%, rgb(224 16 60 / 0.38), transparent 60%),
-    radial-gradient(40rem 24rem at 0% 110%, rgb(224 16 60 / 0.16), transparent 60%),
-    linear-gradient(180deg, #0c0c10, #121218);
+    radial-gradient(48rem 26rem at 88% -8%, rgb(179 38 30 / 0.10), transparent 60%),
+    radial-gradient(36rem 22rem at -5% 105%, rgb(179 38 30 / 0.06), transparent 60%),
+    var(--color-canvas);
 }
 .hero-grid {
-  background-image:
-    linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(ellipse at 70% 30%, black 20%, transparent 70%);
+  background-image: radial-gradient(rgb(42 26 20 / 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse at 70% 30%, black 15%, transparent 65%);
 }
 
 .card {
-  background: white;
-  border: 1px solid rgb(12 12 16 / 0.07);
+  background: var(--color-paper);
+  border: 1px solid var(--color-zinc-200);
   border-radius: 1.25rem;
-  box-shadow: 0 1px 2px rgb(12 12 16 / 0.04), 0 8px 24px -12px rgb(12 12 16 / 0.12);
+  box-shadow: 0 1px 2px rgb(42 26 20 / 0.04), 0 18px 40px -28px rgb(42 26 20 / 0.28);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s, border-color 0.35s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-zinc-300);
+  box-shadow: 0 2px 4px rgb(42 26 20 / 0.05), 0 26px 50px -30px rgb(42 26 20 / 0.38);
+}
+
+/* Breathing room between big sections. */
+.section {
+  padding-block: clamp(3.5rem, 7vw, 6rem);
 }
 
 /* Cursor-following glow for cards; JS sets --mx/--my. */

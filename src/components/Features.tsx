@@ -163,7 +163,7 @@ export function Features() {
   const c = CHAPTERS[active];
 
   return (
-    <section id="how" className="relative py-20">
+    <section id="how" className="section relative">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <Reveal>
           <p className="text-xs font-semibold tracking-[0.18em] text-blood-600 uppercase">How TinyFish powers BloodLink</p>
@@ -241,7 +241,7 @@ export function Features() {
                 ref={(el) => {
                   refs.current[i] = el;
                 }}
-                className="flex min-h-[70vh] items-center py-10 lg:min-h-[80vh]"
+                className="flex min-h-[44vh] items-center py-8 lg:min-h-[52vh]"
               >
                 <div className={`transition duration-500 ${isOn ? "opacity-100" : "opacity-30 blur-[0.5px]"}`}>
                   <div className="flex items-center gap-3">

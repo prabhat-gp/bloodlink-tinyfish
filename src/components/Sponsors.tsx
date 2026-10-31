@@ -13,7 +13,7 @@ export function Sponsors() {
       <div className="hero-grid pointer-events-none absolute inset-0 opacity-60" />
       <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-blood-600/25 blur-3xl" />
 
-      <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <div className="section relative mx-auto max-w-6xl px-4 sm:px-6">
         <Reveal>
           <p className="text-xs font-semibold tracking-[0.18em] text-blood-300 uppercase">Made possible by</p>
           <h2 className="mt-2 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">

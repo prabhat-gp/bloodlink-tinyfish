@@ -26,10 +26,10 @@ const EST_WIDEN_STEPS = 7 * 20;
 
 /** Observed on eRaktKosh, Bangalore Urban, 31 Oct 2026. */
 const STATS = [
-  ["95", "blood banks listed in Bengaluru"],
-  ["10", "had whole blood in stock"],
-  ["3", "had O− whole blood"],
-  ["8 mo", "since the oldest stock update"],
+  ["95", "blood banks in Bengaluru"],
+  ["3", "have O− right now"],
+  ["~2 s", "to check them all"],
+  ["8 mo", "oldest update we flag"],
 ] as const;
 
 interface Props {
@@ -152,58 +152,57 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
   return (
     <div id="top" className="min-h-screen">
       {/* ---------- Hero ---------- */}
-      <div className="hero-bg relative overflow-hidden text-white">
+      <div className="hero-bg relative overflow-hidden text-ink">
         <div className="hero-grid pointer-events-none absolute inset-0" />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <nav className="flex items-center justify-between gap-3 py-5">
             <div className="flex items-center gap-2">
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-blood-600 shadow-[0_0_24px_rgb(224_16_60/0.6)]">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-blood-600 shadow-[0_8px_20px_-6px_rgb(179_38_30/0.6)]">
                 <DropSolid className="h-4 w-4 text-white" />
               </span>
-              <span className="text-lg font-semibold tracking-tight">BloodLink</span>
+              <span className="serif text-[22px] tracking-tight">Blood<i className="text-blood-600">Link</i></span>
             </div>
             <div className="flex items-center gap-2 text-xs">
-              <a href="#how" className="hidden rounded-full px-3 py-1.5 font-medium text-white/60 transition hover:bg-white/10 hover:text-white sm:inline">
+              <a href="#how" className="hidden rounded-full px-3 py-1.5 font-medium text-zinc-500 transition hover:bg-ink/5 hover:text-ink sm:inline">
                 How it works
               </a>
-              <a href="#sponsors" className="hidden rounded-full px-3 py-1.5 font-medium text-white/60 transition hover:bg-white/10 hover:text-white sm:inline">
+              <a href="#sponsors" className="hidden rounded-full px-3 py-1.5 font-medium text-zinc-500 transition hover:bg-ink/5 hover:text-ink sm:inline">
                 Partners
               </a>
               {mock && (
-                <span className="rounded-full bg-amber-400/15 px-2.5 py-1 font-semibold text-amber-300 ring-1 ring-amber-400/30 ring-inset">
+                <span className="rounded-full bg-amber-100 px-2.5 py-1 font-semibold text-amber-800 ring-1 ring-amber-300 ring-inset">
                   Demo data
                 </span>
               )}
               <span
-                className="hidden items-center gap-2 rounded-full bg-white/[0.07] px-3 py-1 font-medium text-white/70 ring-1 ring-white/10 ring-inset sm:inline-flex"
+                className="hidden items-center gap-2 rounded-full bg-paper px-3 py-1 font-medium text-zinc-600 ring-1 ring-zinc-200 ring-inset sm:inline-flex"
                 title="TinyFish Web Agent costs $0.016 per step"
               >
-                <span className="h-1 w-12 overflow-hidden rounded-full bg-white/15">
+                <span className="h-1 w-12 overflow-hidden rounded-full bg-zinc-200">
                   <span className={`block h-full rounded-full ${overCap ? "bg-blood-500" : "bg-emerald-400"}`} style={{ width: `${pct}%` }} />
                 </span>
                 <span className="tabular-nums">
                   ${estimateCost(stepsUsed).toFixed(2)} / ${estimateCost(stepCap).toFixed(2)}
                 </span>
               </span>
-              <span className="hidden items-center gap-1.5 text-white/50 md:inline-flex">
+              <span className="hidden items-center gap-1.5 text-zinc-500 md:inline-flex">
                 <Fish className="h-3.5 w-3.5" /> TinyFish
               </span>
             </div>
           </nav>
 
-          <div className="grid gap-x-10 gap-y-8 pt-6 pb-14 lg:grid-cols-[1fr_440px] lg:pt-10 lg:pb-20">
+          <div className="grid gap-x-14 gap-y-10 pt-8 pb-16 lg:grid-cols-[1fr_440px] lg:pt-14 lg:pb-24">
             <div>
-              <p className="inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-3 py-1 text-xs font-medium text-white/70 ring-1 ring-white/10 ring-inset">
-                <span className="h-1.5 w-1.5 rounded-full bg-blood-500" /> Live blood stock · Karnataka
+              <p className="inline-flex items-center gap-2 rounded-full bg-blood-50 px-3 py-1 text-xs font-bold tracking-[0.12em] text-blood-700 uppercase ring-1 ring-blood-100 ring-inset">
+                <span className="h-1.5 w-1.5 rounded-full bg-blood-500" /> Live from eRaktKosh · all 31 districts
               </p>
-              <h1 className="mt-5 text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                Find blood in
-                <br />
-                <span className="bg-gradient-to-r from-blood-400 to-[#ff8a5c] bg-clip-text text-transparent">60 seconds</span>, not hours of calls.
+              <h1 className="mt-6 text-[2.6rem] leading-[1.02] tracking-[-0.03em] sm:text-6xl lg:text-[4.2rem]">
+                Someone needs blood.{" "}
+                <i className="font-normal text-blood-600">Let&apos;s find it.</i>
               </h1>
-              <p className="mt-5 max-w-lg text-base leading-relaxed text-white/65 sm:text-lg">
-                Families call blood bank after blood bank in an emergency. BloodLink sends an AI agent to the
-                government&apos;s eRaktKosh portal, reads every bank and ranks who actually has your group.
+              <p className="mt-6 max-w-lg text-base leading-relaxed text-zinc-500 sm:text-lg">
+                We read the government&apos;s live blood stock for you in about two seconds and hand back a short list
+                of banks to call, closest and freshest first.
               </p>
             </div>
             {/* Form sits between headline and stats on phones, to the right on desktop. */}
@@ -220,15 +219,15 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
               />
             </div>
             <div className="lg:col-start-1">
-              <dl className="grid max-w-xl grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+              <dl className="grid max-w-xl grid-cols-2 gap-x-8 gap-y-5 border-y border-zinc-200 py-6 sm:grid-cols-4">
                 {STATS.map(([n, label]) => (
                   <div key={label}>
-                    <dt className="text-2xl font-semibold tabular-nums">{n}</dt>
-                    <dd className="mt-0.5 text-xs leading-snug text-white/50">{label}</dd>
+                    <dt className="serif text-3xl tabular-nums">{n}</dt>
+                    <dd className="mt-1 text-xs leading-snug text-zinc-500">{label}</dd>
                   </div>
                 ))}
               </dl>
-              <p className="mt-3 text-[11px] text-white/35">eRaktKosh, Bangalore Urban, 31 Oct 2026</p>
+              <p className="mt-3 text-[11px] text-zinc-400">eRaktKosh, Bangalore Urban, 31 Oct 2026</p>
             </div>
 
           </div>
@@ -236,7 +235,7 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
       </div>
 
       {/* ---------- Work area ---------- */}
-      <div ref={resultsRef} className="mx-auto max-w-6xl scroll-mt-4 px-4 py-8 sm:px-6 lg:py-10">
+      <div ref={resultsRef} className="section mx-auto max-w-6xl scroll-mt-4 px-4 sm:px-6">
         {keyMissing && (
           <Banner>
             Live mode is on but <code className="font-mono">TINYFISH_API_KEY</code> is missing from .env.local. Searches will fail
@@ -249,8 +248,8 @@ export function BloodLinkApp({ mock, stepCap, initialSteps, keyMissing }: Props)
           </Banner>
         )}
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
-          <main className="min-w-0 space-y-4">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
+          <main className="min-w-0 space-y-6">
             <AgentPanel state={state} progress={progress} streamingUrl={streamingUrl} mock={mock} />
 
             {outcome && submitted && (
