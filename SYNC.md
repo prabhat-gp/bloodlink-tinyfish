@@ -14,6 +14,24 @@ Last updated: 31 Oct 2026, ~13:45 IST, by the bot session (fast search, agreed w
 
 ---
 
+## 0. Branch rules (agreed 31 Oct ~14:35)
+
+```
+web session ──push──▶ qa-web-app ─┐
+                                   ├──merge──▶ origin/main ──sync──▶ fork/main ──auto──▶ Railway (site + bot)
+bot session ──push──▶ qa-bot ─────┘
+```
+
+1. Write code on your own branch (`qa-web-app` / `qa-bot`). **Never push straight to `main`.**
+2. Ready to ship → merge your branch into `origin/main` (prabhat-gp).
+3. Deploy → push `main` to the fork (`siddarth-ba-72/bloodlink-tinyfish`, only so Railway can see it). Railway deploys **`main`** automatically.
+4. Before new work, pull `origin/main` into your branch.
+5. Note each merge in the change log below.
+
+Live: https://bloodlink-tinyfish-production.up.railway.app · Bot: @BloodLinkIndiaBot (runs on Railway now, **not** on a laptop: never start a second copy).
+
+---
+
 ## 1. Shared state
 
 | Thing | Value | Where |
@@ -88,6 +106,7 @@ Add requests here, e.g. "bot needs X exported from src/lib".
 |---|---|---|
 | 31 Oct 10:20 | web | Initial push `a86e64d` (V1, mock + live layer). Branches `qa-web-app`, `qa-bot` created from it. |
 | 31 Oct ~11:50 | bot | `qa-bot`: `bot/` workspace, parser, places, end-to-end bot in mock mode (`48223e1`). |
+| 31 Oct ~14:35 | bot | `main` fast-forwarded to `qa-bot` (web V1 + bot + fast search + Railway config). Deploys from `main` via the fork. Branch rules = section 0. |
 | 31 Oct ~13:55 | bot | Bot results get "🧪 Other component": all 8 `COMPONENTS` (same codes as the web dropdown), one tap each. Typed names (PRBC, PCV, SDP, RDP, FFP, cryo, SAGM, plasma, platelets) were already supported. |
 | 31 Oct ~13:45 | bot | Fast search in `src/lib`: `fastStock.ts` (TinyFish browser + eRaktKosh's own data request, direct backup), `liveStockRun` (fast → agent), `/api/search` switched, 8 new tests. Bot uses it (+ "👀 Watch the AI agent" button, copy "a few seconds"). |
 | 31 Oct ~13:10 | bot | `qa-bot`: merged `qa-web-app`; bot is live only (demo removed); places for all 31 districts (~170 towns/areas, pins anywhere in Karnataka); search backstop = `SEARCH_DEADLINE_MS` + 60 s; "2–4 minutes" status copy; "nearest" now says "with blood in stock". |
