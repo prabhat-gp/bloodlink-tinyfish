@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --color-blood-50: #fff1f3;
+  --color-blood-100: #ffe0e5;
+  --color-blood-200: #ffc6d0;
+  --color-blood-300: #ff9aab;
+  --color-blood-400: #ff5c79;
+  --color-blood-500: #f42a50;
+  --color-blood-600: #e0103c;
+  --color-blood-700: #bc0832;
+  --color-blood-800: #9d0a30;
+  --color-blood-900: #860d2f;
+  --color-ink: #0c0c10;
+  --color-canvas: #f6f5f3;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --animate-scan: scan 2.4s ease-in-out infinite;
+  --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-ping-slow: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+  @keyframes scan {
+    0%, 100% { transform: translateY(-10%); opacity: 0; }
+    15%, 85% { opacity: 1; }
+    50% { transform: translateY(900%); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* Hero backdrop: dark, warm glow, faint grid. */
+.hero-bg {
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgb(224 16 60 / 0.38), transparent 60%),
+    radial-gradient(40rem 24rem at 0% 110%, rgb(224 16 60 / 0.16), transparent 60%),
+    linear-gradient(180deg, #0c0c10, #121218);
+}
+.hero-grid {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 70% 30%, black 20%, transparent 70%);
+}
+
+.card {
+  background: white;
+  border: 1px solid rgb(12 12 16 / 0.07);
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 2px rgb(12 12 16 / 0.04), 0 8px 24px -12px rgb(12 12 16 / 0.12);
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.2) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
