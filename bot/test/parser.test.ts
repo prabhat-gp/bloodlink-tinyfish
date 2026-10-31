@@ -124,6 +124,18 @@ describe("place", () => {
     expect(parse("hsr").place?.precise).toBe(true);
   });
 
+  it.each([
+    ["O- in Mangalore", "575"], ["need B+ in hubli", "562"], ["belgaum", "555"], ["gulbarga", "721"],
+    ["O+ blood in Mysuru", "577"], ["shimoga", "568"], ["hospet", "764"], ["bijapur", "722"], ["coorg", "576"],
+    ["udupi", "569"], ["davangere", "567"], ["bellary", "565"], ["karwar", "563"], ["yadgir", "580"],
+  ])("all of Karnataka: %s → district %s", (text, code) => expect(parse(text).place?.district).toBe(code));
+
+  it("a place after in/near wins over a name earlier in the message", () => {
+    expect(place("my brother Hassan needs O- in HSR")).toBe("HSR Layout");
+    expect(place("Hassan")).toBe("Hassan");
+    expect(place("bellary road")).toBe("Hebbal"); // Bangalore road, not Ballari
+  });
+
   it("knows places outside coverage", () => {
     expect(parse("need O- in Chennai").outside).toBe("Chennai");
     expect(parse("O- blood in bombay").outside).toBe("Mumbai");

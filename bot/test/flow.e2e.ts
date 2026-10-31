@@ -215,6 +215,17 @@ describe("conversation", () => {
     expect(texts(cs).at(-1)).toMatch(/Blood banks near Koramangala/);
   });
 
+  it("searches anywhere in Karnataka", async () => {
+    const cs = await send(text("need O+ blood in Mangalore"));
+    expect(texts(cs).at(-1)).toMatch(/O\+ · Whole Blood<\/b> · near Mangaluru/);
+    expect(agent.runs).toBe(1);
+  });
+
+  it("status message says how long a live search takes", async () => {
+    const cs = await send(text("need AB- blood in Hubli"));
+    expect(texts(cs)[0]).toMatch(/2–4 minutes/);
+  });
+
   it("outside coverage, by text or by pin", async () => {
     let cs = await send(text("need O- blood in Chennai"));
     expect(texts(cs)[0]).toMatch(/Chennai<\/b> isn't covered yet/);

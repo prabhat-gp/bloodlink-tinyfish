@@ -1,5 +1,5 @@
 /**
- * Places the bot understands → eRaktKosh district code + an approximate map point.
+ * Places the bot understands (all 31 Karnataka districts) → eRaktKosh district code + an approximate map point.
  * Used for: free text ("near HSR", "koramangla", "560102", "St John's"), location pins,
  * and bank addresses (to show "~4 km"). Coordinates are approximate (±1 km), always shown with "~".
  */
@@ -150,6 +150,70 @@ const AREAS: Row[] = [
   ["T Narasipur", MY, 12.21, 76.9, ["t narsipur", "tirumakudalu narasipura"]],
   ["KR Nagar", MY, 12.441, 76.382, ["k r nagar", "krishnarajanagara"]],
   ["Piriyapatna", MY, 12.336, 76.101, ["periyapatna"]],
+  // ---- Rest of Karnataka (district HQs and big towns; codes from src/lib/eraktkosh.ts DISTRICTS) ----
+  ["Mangaluru", "575", 12.914, 74.856, ["mangalore", "mangaluru city", "dakshina kannada", "kankanady", "hampankatta", "surathkal"]],
+  ["Puttur", "575", 12.76, 75.2, []],
+  ["Bantwal", "575", 12.89, 75.03, ["bantwala", "bc road"]],
+  ["Moodbidri", "575", 13.07, 74.99, ["moodabidri", "mudbidri"]],
+  ["Sullia", "575", 12.56, 75.39, []],
+  ["Udupi", "569", 13.34, 74.75, ["udupi town"]],
+  ["Kundapura", "569", 13.63, 74.69, ["kundapur", "coondapur"]],
+  ["Karkala", "569", 13.21, 74.99, []],
+  ["Hubballi", "562", 15.36, 75.12, ["hubli", "hubballi dharwad", "hubli dharwad", "kims hubli"]],
+  ["Dharwad", "562", 15.46, 75.01, ["dharwar"]],
+  ["Belagavi", "555", 15.85, 74.5, ["belgaum", "belagavi city"]],
+  ["Gokak", "555", 16.17, 74.83, []],
+  ["Chikodi", "555", 16.43, 74.59, ["chikkodi"]],
+  ["Athani", "555", 16.73, 75.06, []],
+  ["Kalaburagi", "721", 17.33, 76.83, ["gulbarga", "kalburgi", "kalaburgi"]],
+  ["Sedam", "721", 17.18, 77.28, []],
+  ["Bidar", "558", 17.91, 77.52, []],
+  ["Basavakalyan", "558", 17.87, 76.95, ["basavakalyana"]],
+  ["Humnabad", "558", 17.77, 77.13, []],
+  ["Vijayapura", "722", 16.83, 75.71, ["bijapur", "vijayapur"]],
+  ["Bagalkot", "556", 16.18, 75.7, ["bagalkote"]],
+  ["Jamkhandi", "556", 16.5, 75.29, []],
+  ["Badami", "556", 15.92, 75.68, []],
+  ["Ilkal", "556", 15.96, 76.11, ["ilakal"]],
+  ["Raichur", "559", 16.21, 77.36, []],
+  ["Sindhanur", "559", 15.77, 76.76, ["sindhnur"]],
+  ["Yadgir", "580", 16.77, 77.14, ["yadgiri"]],
+  ["Shorapur", "580", 16.52, 76.76, ["surpur"]],
+  ["Koppal", "560", 15.35, 76.15, []],
+  ["Gangavathi", "560", 15.43, 76.53, ["gangavati"]],
+  ["Ballari", "565", 15.14, 76.92, ["bellary", "ballari city", "vims ballari"]],
+  ["Siruguppa", "565", 15.63, 76.9, []],
+  ["Hosapete", "764", 15.27, 76.39, ["hospet", "hosapeta", "vijayanagara"]],
+  ["Hampi", "764", 15.34, 76.46, []],
+  ["Gadag", "561", 15.43, 75.63, ["gadag betageri"]],
+  ["Haveri", "564", 14.79, 75.4, []],
+  ["Ranebennur", "564", 14.62, 75.62, ["ranibennur"]],
+  ["Davanagere", "567", 14.46, 75.92, ["davangere", "davanagere city"]],
+  ["Harihar", "567", 14.51, 75.8, []],
+  ["Channagiri", "567", 14.02, 75.93, []],
+  ["Chitradurga", "566", 14.23, 76.4, []],
+  ["Hiriyur", "566", 13.94, 76.62, []],
+  ["Challakere", "566", 14.31, 76.65, []],
+  ["Shivamogga", "568", 13.93, 75.57, ["shimoga", "shivamoga"]],
+  ["Bhadravati", "568", 13.84, 75.7, ["bhadravathi"]],
+  ["Chikkamagaluru", "570", 13.32, 75.77, ["chikmagalur", "chikkamagalur", "chickmagalur"]],
+  ["Kadur", "570", 13.55, 76.01, []],
+  ["Mudigere", "570", 13.13, 75.64, []],
+  ["Hassan", "574", 13.0, 76.1, ["hassan town", "hims hassan"]],
+  ["Channarayapatna", "574", 12.9, 76.39, []],
+  ["Arsikere", "574", 13.31, 76.26, []],
+  ["Sakleshpur", "574", 12.94, 75.79, ["sakleshpura"]],
+  ["Madikeri", "576", 12.42, 75.74, ["mercara", "coorg", "kodagu"]],
+  ["Virajpet", "576", 12.2, 75.8, ["virajpete"]],
+  ["Kushalnagar", "576", 12.46, 75.96, []],
+  ["Karwar", "563", 14.81, 74.13, ["uttara kannada"]],
+  ["Sirsi", "563", 14.62, 74.84, []],
+  ["Dandeli", "563", 15.25, 74.62, []],
+  ["Bhatkal", "563", 13.99, 74.56, []],
+  ["Kumta", "563", 14.43, 74.42, []],
+  ["Chamarajanagar", "578", 11.92, 76.94, ["chamarajanagara", "chamrajnagar"]],
+  ["Kollegal", "578", 12.15, 77.11, ["kollegala"]],
+  ["Gundlupet", "578", 11.81, 76.69, []],
 ];
 
 /** Whole city / district names: good enough to search a district, too vague for distances. */
@@ -175,18 +239,14 @@ const PINCODES: Record<string, string> = {
   "562101": "Chikkaballapur", "572101": "Tumakuru", "571401": "Mandya", "570001": "Mysuru",
 };
 
-/** Places we recognise but don't cover yet (eRaktKosh codes not wired). */
+/** Places outside Karnataka we recognise (all 31 Karnataka districts are covered). */
 const OUTSIDE = [
   "chennai", "madras", "mumbai", "bombay", "delhi", "new delhi", "hyderabad", "secunderabad", "pune", "kolkata",
-  "calcutta", "ahmedabad", "jaipur", "lucknow", "kochi", "cochin", "coimbatore", "goa", "hosur", "krishnagiri",
+  "calcutta", "ahmedabad", "jaipur", "lucknow", "kochi", "cochin", "coimbatore", "goa", "panaji", "hosur", "krishnagiri",
   "noida", "gurgaon", "gurugram", "chandigarh", "bhopal", "indore", "nagpur", "patna", "visakhapatnam", "vizag",
   "vijayawada", "tirupati", "vellore", "salem", "madurai", "trivandrum", "thiruvananthapuram", "kozhikode",
-  "calicut", "hubli", "hubballi", "dharwad", "mangalore", "mangaluru", "udupi", "belgaum", "belagavi",
-  "davangere", "davanagere", "shimoga", "shivamogga", "hassan", "chitradurga", "ballari", "bellary",
-  "kalaburagi", "gulbarga", "bidar", "raichur", "bijapur", "vijayapura", "bagalkot", "gadag", "haveri",
-  "karwar", "chikmagalur", "chikkamagaluru", "kodagu", "coorg", "madikeri", "chamarajanagar", "koppal",
-  "yadgir", "hospet", "hosapete",
-];
+  "calicut", "kasaragod", "kannur", "ooty", "anantapur", "kurnool", "kolhapur", "solapur", "sangli",
+]
 const OUTSIDE_NAME: Record<string, string> = { madras: "Chennai", bombay: "Mumbai", calcutta: "Kolkata", cochin: "Kochi", calicut: "Kozhikode", vizag: "Visakhapatnam" };
 
 // ---------- index (built once) ----------
@@ -252,11 +312,12 @@ export function findPlace(text: string): PlaceMatch {
   }
 
   // 2. Exact alias as whole words. Prefer precise places, then the earliest mention, then the longest alias.
-  let best: { a: Alias; pos: number } | null = null;
+  let best: { a: Alias; pos: number; pre: boolean } | null = null;
   for (const a of ALIASES) {
     const pos = padded.indexOf(` ${a.text} `);
     if (pos < 0) continue;
-    if (!best || better(a, pos, best.a, best.pos)) best = { a, pos };
+    const pre = PREP_BEFORE.test(padded.slice(0, pos + 1));
+    if (!best || better(a, pos, pre, best.a, best.pos, best.pre)) best = { a, pos, pre };
   }
   // 3. Spacing variants ("indira nagar" ↔ "indiranagar", "hsrlayout"), long aliases only.
   if (!best || !best.a.place.precise) {
@@ -265,7 +326,7 @@ export function findPlace(text: string): PlaceMatch {
       if (!a.place.precise || a.squashed.length < 7) continue;
       const pos = sq.indexOf(a.squashed);
       if (pos >= 0) {
-        best = { a, pos };
+        best = { a, pos, pre: false };
         break; // longest first
       }
     }
@@ -299,8 +360,11 @@ export function findPlace(text: string): PlaceMatch {
 
 const STOP = new Set("me my the a an this that our your his her their it here there of for to and or is are am urgent".split(" "));
 
-function better(a: Alias, pos: number, b: Alias, bpos: number) {
+const PREP_BEFORE = /\b(?:in|near|at|around|from|nr|opp|opposite|to)\s*$/;
+
+function better(a: Alias, pos: number, pre: boolean, b: Alias, bpos: number, bpre: boolean) {
   if (a.place.precise !== b.place.precise) return a.place.precise;
+  if (pre !== bpre) return pre;
   if (pos !== bpos) return pos < bpos;
   return a.text.length > b.text.length;
 }
@@ -363,7 +427,7 @@ export function distanceKm(a: { lat: number; lng: number }, b: { lat: number; ln
 }
 
 /** Telegram location pin → nearest known area (and so the district). null = outside what we cover. */
-export function placeNear(lat: number, lng: number, maxKm = 35): { place: Place; km: number } | null {
+export function placeNear(lat: number, lng: number, maxKm = 60): { place: Place; km: number } | null {
   let best: { place: Place; km: number } | null = null;
   for (const p of PLACES) {
     if (!p.precise) continue;

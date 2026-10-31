@@ -11,7 +11,7 @@ const DESCRIPTION = [
   "",
   "Send one message like “need O- blood near HSR”. An AI web agent checks the government's live blood stock (eRaktKosh) and I reply with blood banks that have it, their phone numbers and how fresh the data is.",
   "",
-  "Bangalore and nearby districts. Emergency: 108",
+  "All 31 districts of Karnataka. Emergency: 108",
 ].join("\n");
 
 /** Name, menu and the text people see before they press Start. Best effort: never blocks startup. */
@@ -23,7 +23,7 @@ async function setProfile(api: Api) {
       { command: "help", description: "How it works · emergency number" },
     ]),
     api.setMyDescription(DESCRIPTION),
-    api.setMyShortDescription("Blood banks with your blood group in stock, live from eRaktKosh. Bangalore & nearby. Emergency: 108"),
+    api.setMyShortDescription("Blood banks with your blood group in stock, live from eRaktKosh. All of Karnataka. Emergency: 108"),
     api.getMyName().then((n) => (n.name === "BloodLink" ? true : api.setMyName("BloodLink"))),
   ];
   const results = await Promise.allSettled(tasks);

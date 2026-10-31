@@ -25,7 +25,8 @@ Only one copy of the bot can run per token. A second copy fails with "already ru
 | `O blood`, `platelets` | Asks only what's ambiguous: O+ or O−? RDP or SDP? |
 | `nearest blood bank` / a location pin / `Koramangala` | Blood banks closest first, with what they have in stock |
 | `alert me when O- is available in HSR` | Results + subscribes (checks every 30 min for 48 h, messages only about new banks) |
-| `O- in Chennai` | "Not covered yet" + eRaktKosh link + 108 |
+| `O- in Mangalore`, `hubli`, a pin anywhere in Karnataka | Searches that district (all 31 covered) |
+| `O- in Chennai` | "Not covered yet" (outside Karnataka) + eRaktKosh link + 108 |
 | Buttons | 🔔 Alert · 🔄 Refresh · 📤 Share (forwardable + WhatsApp) · 📋 Show all · 🔍 Nearby districts · 🧪 Other component (ask doctor) |
 | `/alerts` `/help` `/cancel` | Manage alerts, how it works, reset |
 | `/checknow` (hidden) | Runs this chat's alert check now (a real eRaktKosh check, uses credits) |
@@ -46,7 +47,7 @@ bot/
     bot.ts        builds the bot (shared with tests)
     handlers.ts   the conversation: ask only what's missing, then search
     parser.ts     free text → group, component, place, intent (rule-based)
-    areas.ts      ~110 areas, landmarks, pincodes, towns → district + map point
+    areas.ts      Bangalore areas + landmarks, towns in all 31 districts, pincodes → district + map point
     search.ts     searchBloodStock(): 15-min cache, joins identical searches, max 2 agent runs
     format.ts     every message and button
     alerts.ts     "Alert me" + 30-min re-check

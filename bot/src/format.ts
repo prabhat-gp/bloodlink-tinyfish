@@ -242,7 +242,7 @@ export function nearestMessage(r: StockResult, spot: Spot, donate = false): Msg 
   const comp = SHORT[q.component] ?? componentLabel(q.component);
   const lines = donate
     ? [`❤️ <b>Thank you for wanting to donate!</b>`, `Blood banks ${whereText(q, spot)}. Call ahead to check donation timings.`, ""]
-    : [`🏥 <b>Blood banks ${whereText(q, spot)}</b>`, ""];
+    : [`🏥 <b>Blood banks ${whereText(q, spot)} with blood in stock</b>`, ""];
   placed.slice(0, 6).forEach((p, i) => {
     const b = p.bank;
     const have = Object.entries(b.units)
@@ -251,7 +251,7 @@ export function nearestMessage(r: StockResult, spot: Spot, donate = false): Msg 
     const stock = have.length ? `${comp} in stock: ${have.join(" · ")}` : `No ${comp.toLowerCase()} listed`;
     lines.push(`${i + 1}. <b>${esc(b.name)}</b>${kmText(p.km)}`, `    🩸 ${stock} · ${freshText(b)}`, `    ${contactLine(b)}`, "");
   });
-  if (!placed.length) lines.push("No blood banks found for this district on eRaktKosh.", "");
+  if (!placed.length) lines.push(`No blood bank in ${esc(districtName(q.district))} reports ${comp.toLowerCase()} in stock right now.`, "");
   if (!spot.precise) lines.push("📍 Send your location or type your area to sort these by distance.", "");
   lines.push(`<i>Stock checked ${agoIso(r.checkedAt)}.</i>`);
   lines.push(FOOTER);
@@ -290,7 +290,7 @@ export function statusText(q: SearchQuery, spot: Spot | undefined, s: { seconds:
     ? `🔎 Getting blood banks ${whereText(q, spot)} from eRaktKosh`
     : `🔎 Checking eRaktKosh for <b>${groupLabel(q.group)}</b> · ${componentLabel(q.component)} · ${whereText(q, spot)}`;
   const wait = s.queued ? `⏳ Waiting for a free agent (${s.queued} ahead)…` : `⏳ ${s.seconds}s · ${esc(s.progress)}`;
-  const hint = "An AI agent is filling in the government form for you. Usually 30–60 s.";
+  const hint = "An AI agent is filling in the government form for you. This takes 2–4 minutes; you can leave the chat, I'll message you.";
   return [what, wait, `<i>${hint}</i>`].join("\n");
 }
 export const watchKeyboard = (url: string) => new InlineKeyboard().url("👀 Watch the agent live", url);
@@ -306,7 +306,7 @@ export const welcome = (): Msg => ({
     "• <i>B+ platelets in Jayanagar</i>",
     "• <i>nearest blood bank</i>",
     "",
-    "Covers Bangalore and nearby districts. Emergency: <b>108</b>",
+    "Covers all of Karnataka. Emergency: <b>108</b>",
   ].join("\n"),
   keyboard: new InlineKeyboard().text("🩸 I need blood", "start:blood").text("🏥 Nearest blood bank", "start:nearest"),
 });
@@ -315,7 +315,7 @@ export const help = (): Msg => ({
   text: [
     "<b>How BloodLink works</b>",
     "1. Tell me the blood group and area, e.g. <i>O- near Koramangala</i>. I'll ask for anything missing.",
-    `2. An AI agent (TinyFish) checks the government's eRaktKosh portal live. About a minute, or instant if someone searched the same in the last ${config.cacheTtlMinutes} min.`,
+    `2. An AI agent (TinyFish) checks the government's eRaktKosh portal live. 2–4 minutes, or instant if someone searched the same in the last ${config.cacheTtlMinutes} min.`,
     "3. You get blood banks with stock, phone numbers, map links and how fresh their data is.",
     "",
     "<b>Also</b>",
@@ -385,21 +385,18 @@ export function askPlace(d: Draft, again = false): Msg {
     .requestLocation("📍 Send my location")
     .row()
     .text("Bangalore Urban")
-    .text("Bangalore Rural")
+    .text("Mysuru")
+    .text("Mangaluru")
     .row()
-    .text("Mysore")
-    .text("Tumkur")
-    .text("Mandya")
-    .row()
-    .text("Kolar")
-    .text("Chikkaballapura")
-    .text("Ramanagara")
+    .text("Hubballi")
+    .text("Belagavi")
+    .text("Kalaburagi")
     .resized()
     .oneTime();
   return { text, keyboard: kb };
 }
 
-const COVERED = "Bangalore and nearby districts: Bangalore Rural, Ramanagara, Kolar, Chikkaballapura, Tumkur, Mandya and Mysore";
+const COVERED = "all 31 districts of Karnataka";
 
 export const outside = (name: string): Msg => ({
   text: [

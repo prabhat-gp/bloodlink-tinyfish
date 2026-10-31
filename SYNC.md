@@ -10,7 +10,7 @@ Both sessions read this file before changing anything shared. **Update it in the
 
 The bot **imports** `../src/lib/*` and never edits it. If the bot needs something in `src/lib`, ask the web app session (or note it under "Requests" below).
 
-Last updated: 31 Oct 2026, ~12:40 IST, by the web app session.
+Last updated: 31 Oct 2026, ~13:10 IST, by the bot session.
 
 ---
 
@@ -55,16 +55,16 @@ Spent so far today: ~$0.45 (3 live runs).
 
 ## 5. Bot is behind on (bot session: please fix and tick)
 
-- [ ] `bot/src/areas.ts` maps places to only ~9 districts. Add towns for **all 31** (codes in `DISTRICTS`), e.g. Mysuru → 577, Mangaluru → 575, Hubballi/Dharwad → 562, Belagavi → 555, Kalaburagi → 721, Udupi → 569, Shivamogga → 568, Davanagere → 567, Ballari → 565, Hosapete → 764. "O- in Mysuru" should search, not reply "not covered".
-- [ ] `bot/src/search.ts` aborts with `AbortSignal.timeout(300_000)`. A slow eRaktKosh run can need up to 7 min; raise to ≥ `420_000` (or import `SEARCH_DEADLINE_MS`), or the user gets a failure on a run that would have succeeded.
-- [ ] Status copy: say "this takes 2–4 minutes" rather than "60 seconds".
-- [ ] Empty `banks` + `status:"success"` = "no bank has it in stock right now" (now normal, since the agent filters).
+- [x] `bot/src/areas.ts` maps places to only ~9 districts. Add towns for **all 31** (codes in `DISTRICTS`), e.g. Mysuru → 577, Mangaluru → 575, Hubballi/Dharwad → 562, Belagavi → 555, Kalaburagi → 721, Udupi → 569, Shivamogga → 568, Davanagere → 567, Ballari → 565, Hosapete → 764. "O- in Mysuru" should search, not reply "not covered".
+- [x] `bot/src/search.ts` aborts with `AbortSignal.timeout(300_000)`. A slow eRaktKosh run can need up to 7 min; raise to ≥ `420_000` (or import `SEARCH_DEADLINE_MS`), or the user gets a failure on a run that would have succeeded.
+- [x] Status copy: say "this takes 2–4 minutes" rather than "60 seconds".
+- [x] Empty `banks` + `status:"success"` = "no bank has it in stock right now" (now normal, since the agent filters).
 
 ## 6. Requests
 
 Add requests here, e.g. "bot needs X exported from src/lib".
 
-- (none yet)
+- **bot → web:** a `src/lib/server` helper that returns the statewide directory (Dataset rows: name, phone, area, district code) without going through `/api/directory`. Since the agent now returns only in-stock banks, the bot's "nearest blood bank" list and its "banks to call" list (when nothing is in stock) are empty or short. The directory would fill both with phone numbers.
 
 ## 7. Change log
 
@@ -72,4 +72,5 @@ Add requests here, e.g. "bot needs X exported from src/lib".
 |---|---|---|
 | 31 Oct 10:20 | web | Initial push `a86e64d` (V1, mock + live layer). Branches `qa-web-app`, `qa-bot` created from it. |
 | 31 Oct ~11:50 | bot | `qa-bot`: `bot/` workspace, parser, places, end-to-end bot in mock mode (`48223e1`). |
+| 31 Oct ~13:10 | bot | `qa-bot`: merged `qa-web-app`; bot is live only (demo removed); places for all 31 districts (~170 towns/areas, pins anywhere in Karnataka); search backstop = `SEARCH_DEADLINE_MS` + 60 s; "2–4 minutes" status copy; "nearest" now says "with blood in stock". |
 | 31 Oct 12:40 | web | `qa-web-app`: went live; 31 districts; filtered agent goal; run cancel + 7-min deadline; statewide Datasets directory; cleaned Research; URL pre-fill + Telegram links; scroll-driven "How it works" section (8 chapters incl. the bot); partners section. |

@@ -7,7 +7,7 @@
  */
 import { NEIGHBOURS } from "../../src/lib/eraktkosh";
 import { lastGood } from "../../src/lib/server/agent";
-import { liveAgentRun } from "../../src/lib/server/liveSearch";
+import { liveAgentRun, SEARCH_DEADLINE_MS } from "../../src/lib/server/liveSearch";
 import { readJson, writeJson } from "../../src/lib/server/store";
 import type { AgentEvent, RawBank, SearchQuery } from "../../src/lib/types";
 import { config } from "./config";
@@ -148,8 +148,9 @@ async function run(q: SearchQuery, job: Job): Promise<StockResult> {
   each((w) => w.onStart?.());
 
   let result: StockResult | null = null;
+  // Our backstop sits 1 min after the web app's own 7-min deadline, which stops the run first.
   try {
-    for await (const ev of runner(q, AbortSignal.timeout(300_000))) {
+    for await (const ev of runner(q, AbortSignal.timeout(SEARCH_DEADLINE_MS + 60_000))) {
       if (ev.type === "STREAMING_URL" && ev.streaming_url) {
         job.streamingUrl = ev.streaming_url;
         each((w) => w.onStreamingUrl?.(ev.streaming_url!));

@@ -7,11 +7,23 @@ describe("areas", () => {
     for (const p of PLACES) expect(DISTRICTS[p.district], p.name).toBeDefined();
   });
 
+  it("every one of the 31 districts has at least one place", () => {
+    const covered = new Set(PLACES.map((p) => p.district));
+    for (const [code, name] of Object.entries(DISTRICTS)) expect(covered.has(code), name).toBe(true);
+    expect(Object.keys(DISTRICTS)).toHaveLength(31);
+  });
+
+  it("location pins across the state", () => {
+    expect(placeNear(12.87, 74.88)?.place.district).toBe("575"); // Mangaluru
+    expect(placeNear(15.35, 75.14)?.place.district).toBe("562"); // Hubballi
+    expect(placeNear(17.33, 76.83)?.place.district).toBe("721"); // Kalaburagi
+  });
+
   it("every place sits inside Karnataka's rough box", () => {
     for (const p of PLACES) {
       expect(p.lat, p.name).toBeGreaterThan(11.5);
-      expect(p.lat, p.name).toBeLessThan(14.5);
-      expect(p.lng, p.name).toBeGreaterThan(75.5);
+      expect(p.lat, p.name).toBeLessThan(18.5);
+      expect(p.lng, p.name).toBeGreaterThan(74);
       expect(p.lng, p.name).toBeLessThan(78.6);
     }
   });
