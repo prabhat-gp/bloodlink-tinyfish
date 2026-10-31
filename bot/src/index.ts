@@ -51,17 +51,29 @@ async function main() {
   process.once("SIGINT", stop);
   process.once("SIGTERM", stop);
 
-  await bot.start({
-    onStart: (me) =>
-      console.log(
-        `BloodLink bot @${me.username} running · live eRaktKosh · cache ${config.cacheTtlMinutes} min · alerts every ${config.alertIntervalMinutes} min`,
-      ),
-  });
+  // During a redeploy the old copy may still be polling for a few seconds (Telegram 409). Wait and retry
+  // instead of exiting, so the new container takes over cleanly.
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await bot.start({
+        onStart: (me) =>
+          console.log(
+            `BloodLink bot @${me.username} running · live eRaktKosh · cache ${config.cacheTtlMinutes} min · alerts every ${config.alertIntervalMinutes} min`,
+          ),
+      });
+      return;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (!/409|Conflict/i.test(msg) || attempt >= 30) throw e;
+      console.warn(`[bot] another copy is still polling (409); retrying in 10 s (${attempt}/30)`);
+      await new Promise((r) => setTimeout(r, 10_000));
+    }
+  }
 }
 
 main().catch((e) => {
   const msg = e instanceof Error ? e.message : String(e);
-  if (/409|Conflict/i.test(msg)) console.error("Another copy of this bot is already running with the same token. Stop it first.");
+  if (/409|Conflict/i.test(msg)) console.error("Another copy of this bot kept running with the same token for 5 minutes. Stop it first.");
   else console.error(e);
   process.exit(1);
 });
